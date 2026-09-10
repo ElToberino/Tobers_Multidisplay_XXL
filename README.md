@@ -58,6 +58,10 @@ If you have problems connecting to Spotify, please check if the TLS certificates
 Why don't you provide a tutorial for setting up the display?<br>
 *This is the expert version of my Multidisplay. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please not that there is no support for this expert version.*<br>
 <br>
+Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
+*1. The compiled file bin file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme.<br>
+2. With core 3 I faced some issues with http client occuring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
+<br>
 Where are the English html files?<br>
 *To keep it simple I do not provide two versions of the html files. As an expert you could easily adopt the htnl files; but this is not necessary as they are self-explaining. Of course the English language version for the messages on display is still implemented.*<br>
 <br>
@@ -65,8 +69,8 @@ Why can I choose on "Musikinfo" between Spotify, Castweb and Info extern?<br>
 *The support of Castweb is experimental and not recommended. It bases on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function. Info extern is a simple API of my program: You can send a simple json string containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this string as music information. Take a look at the code for further information.*<br>
 <br>
 Which API do you prefer?<br>
-*As always - it depends.. Take a look at the API features and decide what fits better for your perposes. Also keep in mind the daily call limits of the APIs.<br>
-Concerning weather you should find out, which API delivers the most precise current weather and forecast for your location. In my use case, open-meteo is more precise, but that depends on your location.*<br>
+*As always - it depends.. Take a look at the API features and decide which one meets your requirements better. Testing is easy as APIs and news sources can be changed during runtime. But keep in mind the daily call limits of the APIs.<br>
+Concerning weather you should find out, which API delivers the most precise current weather and forecast for your location. In my use case open-meteo is more precise, but the answer depends on your location.*<br>
 <br>
 **Credits**<br>
 This project wouldn't have been possible without the work of many others:
