@@ -12,7 +12,7 @@ If you want more and you don't mind about things getting more complicated you ca
 
 **About**<br>
 Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicated for the many users that like my display very much, I've decided to set up a completely new project.<br>
-(Still in pre-AI era) I began with integrating the graphic animations of the [MD_MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine-tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
+(Still in pre-AI era) I began with integrating the graphic animations of the [MD_MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last months, I used some AI help for fine-tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
 Please note: This is not a fork but a completely new version, so updating via OTA does not work. You have to upload both code and files.
 
 **New features:**
