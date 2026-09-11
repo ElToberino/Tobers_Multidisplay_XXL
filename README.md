@@ -1,16 +1,20 @@
 # Tobers Multidisplay XXL
-Tobers Multidisplay XXL for ESP32 and MAX7219 8x8 LED matrix modules is the expert version of Tobers Multidisplay.<br>
-In addition to the well known features of Tobers Multidisplay it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
-**Note:** You should be familiar with "Tobers Multidisplay" and only try out this new version if you know how the program works and how to set up everything. As this software is "experts only" there is no support. This is not a fork but a completely new version, so updating via OTA does not work. You have to upload boath code and files.<br><br>
+Tobers Multidisplay XXL for ESP32 and MAX7219 8x8 LED matrix modules is the expert version of [Tobers Multidisplay](https://github.com/ElToberino/Tobers_Multidisplay).<br>
+In addition to the well known features of *Tobers Multidisplay* it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
+**Note:** You should be familiar with *Tobers Multidisplay* and only try out this new version if you know how the program works and how to set up everything. As this software is "experts only" there is no support.<br>
+If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
+If you want more and you don't mind about things getting more complicate you can go on.<br>
+**Please read the following information carefully before starting your project.** <br><br>
 <img src="showcase/Multidisplay_final.jpg" width="500">
 <br><br>
 **About**<br>
-Always keeping Tobers Multidisplay up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the may users that like my display very much, I've decided to set up a completely new project.<br>
-(Still in pre AI era) I began with integrating the graphic animations of the [MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty programm has been built.
+Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the many users that like my display very much, I've decided to set up a completely new project.<br>
+(Still in pre AI era) I began with integrating the graphic animations of the [MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
+Please note: This is not a fork but a completely new version, so updating via OTA does not work. You have to upload boath code and files.
 
 **New features:**
-- graphic animations
-- service Messages (Example: "News Service" is shown before news message)
+- graphic animations (as shown in the "Daft Punk" example in [MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
+- service messages (example: "News Service" is shown before news message)
 - differents APIs, all configurable during runtime
 - API-Logs
 - optional combined date and time mode for large displays
@@ -19,7 +23,7 @@ Always keeping Tobers Multidisplay up to date I considered adding new functions 
 - multiple file uplaod und download (SPIFFS), support of gzip files
 
 **Under the hood:**
-* Lots of optimizations (Strings, Wifi, Time, dynamic html) and code simplifications.
+* lots of optimizations (String handling, Wifi, Time, dynamic html, ...) and code simplifications.
   
 <br>
 
@@ -43,34 +47,60 @@ Note: I highly recommend V 2.0.17.<br>
 
 * *Required accounts:*<br>
 WEATHER: personal api key from [openweathermap.org](https://openweathermap.org/)<br>
-NEWS: personal api key from [newsapi.org/](https://newsapi.org/) and from [thenewsapi.com/](https://thenewsapi.com/) <br>
+NEWS: personal api key from [newsapi.org](https://newsapi.org/) and from [thenewsapi.com](https://thenewsapi.com/) <br>
 SPOTIFY: premium account AND [developer registration of your device](https://developer.spotify.com/dashboard/)
 <br><br>
 
 **Setup**<br>
-All settings required have to be done on top of the code in the /// USER SETTINGS /// section. All other configuration is done during runtime via config.html.
+All settings required have to be done on top of the code in the /// USER SETTINGS /// section. All other configuration is done during runtime via config.html.<br>
+
+**Messages**<br>
+All messages are set via admin.html.<br> 
+The first message and and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
+On this site changes are only saved persistently saved to file by clicking "Save Current".<br>
+
+**Configuration**<br>
+All settings are made via config.html and automatically saved to file.<br>
+Clicking "Display" on top of the site reveals detailed information of the device.<br>
+
+**APIs**<br>
+On api.html you can change newssources and weather coordinates.<br>
+On this site changes are only saved persistently saved to file by clicking "Save Current".<br>
 
 **Spotify**<br>
-Please note that Spotify has recently limited the lifetime of the refreshtoken; it expires after 180 days. That means you have to do the authentication process again after this time.<br>
+Please note that Spotify has recently limited the lifetime of the refreshtoken; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refreshtoken in the Music Api Log on api.html.<br>
 If you have problems connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
-<br><br>
+<br><br><br>
 **FAQ**<br>
 Why don't you provide a tutorial for setting up the display?<br>
 *This is the expert version of my Multidisplay. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please not that there is no support for this expert version.*<br>
+<br>
+I want to use a small display with few modules. Will it work?<br>
+*Sure. This XXL version has some functions designed for larger displays, but you can easily deactivate them if they don't fit on your display (service messages, combined time/date).*<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
 *1. The compiled file bin file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme.<br>
 2. With core 3 I faced some issues with http client occuring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
+Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
+*No. This is not a fork but a completely new version of the program with different files. Erase chip completely und do a clean fresh install.*<br>
+<br>
 Where are the English html files?<br>
-*To keep it simple I do not provide two versions of the html files. As an expert you could easily adopt the htnl files; but this is not necessary as they are self-explaining. Of course the English language version for the messages on display is still implemented.*<br>
+*To keep it simple I do not provide two versions of the html files (as you now it from the former version).<br> 
+As an expert you can easily adopt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
+Of course the English language version for the messages on display is still implemented.*<br>
 <br>
 Why can I choose on "Musikinfo" between Spotify, Castweb and Info extern?<br>
-*The support of Castweb is experimental and not recommended. It bases on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function. Info extern is a simple API of my program: You can send a simple json string containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this string as music information. Take a look at the code for further information.*<br>
+*The support of Castweb is experimental and not recommended. It bases on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
+Info extern is a simple API of my program: You can send a simple json string containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this string as music information. Take a look at the code for further information.*<br>
 <br>
 Which API do you prefer?<br>
 *As always - it depends.. Take a look at the API features and decide which one meets your requirements better. Testing is easy as APIs and news sources can be changed during runtime. But keep in mind the daily call limits of the APIs.<br>
 Concerning weather you should find out, which API delivers the most precise current weather and forecast for your location. In my use case open-meteo is more precise, but the answer depends on your location.*<br>
+<br>
+Can I report issues? You wrote there is no support.<br> 
+*Of course. No support means that I can not provide individual help for setup, API accounts, Spotify authentication etc. There are very detailed explainations with former Tobers Multidisplay which is still supported. This is the advanced version of this program and not a beginner project.*<br>
+<br>
 <br>
 **Credits**<br>
 This project wouldn't have been possible without the work of many others:
