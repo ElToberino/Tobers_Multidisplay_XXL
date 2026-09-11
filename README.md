@@ -5,7 +5,7 @@ In addition to the well known features of *Tobers Multidisplay* it can also show
 If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
 If you want more and you don't mind about things getting more complicate you can go on.<br>
 **Please read the following information carefully before starting your project.** <br><br>
-<img src="showcase/Multidisplay_final.jpg" width="500">
+<img src="showcase/Multidisplay_XXL.jpg" width="500" align="center" >
 <br><br>
 **About**<br>
 Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the many users that like my display very much, I've decided to set up a completely new project.<br>
