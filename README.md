@@ -8,7 +8,8 @@ If you want more and you don't mind about things getting more complicate you can
 <p align="center">
   <img src="showcase/Multidisplay_XXL.jpeg" width="500">
 </p>
-<br><br>
+<br>
+
 **About**<br>
 Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the many users that like my display very much, I've decided to set up a completely new project.<br>
 (Still in pre AI era) I began with integrating the graphic animations of the [MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
@@ -17,7 +18,7 @@ Please note: This is not a fork but a completely new version, so updating via OT
 **New features:**
 - graphic animations (as shown in the "Daft Punk" example in [MD_MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
 - service messages (example: "News Service" is shown before news message)
-- differents APIs, all configurable during runtime
+- different APIs, all configurable during runtime
 - API-Logs
 - optional combined date and time mode for large displays
 - optional time with seconds during message loop
