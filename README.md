@@ -5,7 +5,9 @@ In addition to the well known features of *Tobers Multidisplay* it can also show
 If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
 If you want more and you don't mind about things getting more complicate you can go on.<br>
 **Please read the following information carefully before starting your project.** <br><br>
-<img src="showcase/Multidisplay_XXL.jpeg" width="500" align="center" >
+<p align="center">
+  <img src="showcase/Multidisplay_XXL.jpeg" width="500">
+</p>
 <br><br>
 **About**<br>
 Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the many users that like my display very much, I've decided to set up a completely new project.<br>
@@ -13,7 +15,7 @@ Always keeping *Tobers Multidisplay* up to date I considered adding new function
 Please note: This is not a fork but a completely new version, so updating via OTA does not work. You have to upload boath code and files.
 
 **New features:**
-- graphic animations (as shown in the "Daft Punk" example in [MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
+- graphic animations (as shown in the "Daft Punk" example in [MD_MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
 - service messages (example: "News Service" is shown before news message)
 - differents APIs, all configurable during runtime
 - API-Logs
@@ -33,7 +35,7 @@ Classic ESP32 (4MB Flash)<br>
 Max7219 8x8 LED matrix modules (Meanwhile I use displays with up to 20 modules)<br>
 
 * *Arduino IDE and the following libraries:*<br>
-[MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX)<br>
+[MD_MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX)<br>
 [Parola Library by majicDesigns](https://github.com/MajicDesigns/MD_Parola)<br>
 [Arduino Json library by Benoit Blanchon](https://github.com/bblanchon/ArduinoJson)<br>
 [My fork of WifiManager library (development branch) by tzapu/tablatronix](https://github.com/ElToberino/WiFiManager_for_Multidisplay)<br>
