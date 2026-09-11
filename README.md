@@ -1,9 +1,9 @@
 # Tobers Multidisplay XXL
 Tobers Multidisplay XXL for ESP32 and MAX7219 8x8 LED matrix modules is the expert version of [Tobers Multidisplay](https://github.com/ElToberino/Tobers_Multidisplay).<br>
-In addition to the well known features of *Tobers Multidisplay* it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
+In addition to the well-known features of *Tobers Multidisplay* it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
 **Note:** You should be familiar with *Tobers Multidisplay* and only try out this new version if you know how the program works and how to set up everything. As this software is "experts only" there is no support.<br>
 If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
-If you want more and you don't mind about things getting more complicate you can go on.<br>
+If you want more and you don't mind about things getting more complicated you can go on.<br>
 **Please read the following information carefully before starting your project.** <br><br>
 <p align="center">
   <img src="showcase/Multidisplay_XXL.jpeg" width="500">
@@ -12,8 +12,8 @@ If you want more and you don't mind about things getting more complicate you can
 
 **About**<br>
 Always keeping *Tobers Multidisplay* up to date I considered adding new functions and optimizations to it. But as I don't want to drop support for ESP8266 and as I don't want to make it much more complicate for the many users that like my display very much, I've decided to set up a completely new project.<br>
-(Still in pre AI era) I began with integrating the graphic animations of the [MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
-Please note: This is not a fork but a completely new version, so updating via OTA does not work. You have to upload boath code and files.
+(Still in pre-AI era) I began with integrating the graphic animations of the [MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX). After that I got more and more ideas and now there is a program with lots of new features and even more optimizations under the hood. Finally, during the last month, I used some AI help for fine tuning and adding some features like multiple file upload. Going through the code you will still see the base from original Multidisplay on which a mighty program has been built.<br>
+Please note: This is not a fork but a completely new version, so updating via OTA does not work. You have to upload both code and files.
 
 **New features:**
 - graphic animations (as shown in the "Daft Punk" example in [MD_MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
@@ -23,7 +23,7 @@ Please note: This is not a fork but a completely new version, so updating via OT
 - optional combined date and time mode for large displays
 - optional time with seconds during message loop
 - shuffle mode for text effects and graphic animations
-- multiple file uplaod und download (SPIFFS), support of gzip files
+- multiple file upload and download (SPIFFS), support of gzip files
 
 **Under the hood:**
 * lots of optimizations (String handling, Wifi, Time, dynamic html, ...) and code simplifications.
@@ -59,7 +59,7 @@ All settings required have to be done on top of the code in the /// USER SETTING
 
 **Messages**<br>
 All messages are set via admin.html.<br> 
-The first message and and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
+The first message and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
 On this site changes are only saved persistently saved to file by clicking "Save Current".<br>
 
 **Configuration**<br>
@@ -68,7 +68,7 @@ Clicking "Display" on top of the site reveals detailed information of the device
 
 **APIs**<br>
 On api.html you can change newssources and weather coordinates.<br>
-On this site changes are only saved persistently saved to file by clicking "Save Current".<br>
+On this site changes are only saved persistently to file by clicking "Save Current".<br>
 
 **Spotify**<br>
 Please note that Spotify has recently limited the lifetime of the refreshtoken; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refreshtoken in the Music Api Log on api.html.<br>
@@ -76,13 +76,13 @@ If you have problems connecting to Spotify, please check if the TLS certificates
 <br><br><br>
 **FAQ**<br>
 Why don't you provide a tutorial for setting up the display?<br>
-*This is the expert version of my Multidisplay. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please not that there is no support for this expert version.*<br>
+*This is the expert version of my Multidisplay. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please note that there is no support for this expert version.*<br>
 <br>
 I want to use a small display with few modules. Will it work?<br>
 *Sure. This XXL version has some functions designed for larger displays, but you can easily deactivate them if they don't fit on your display (service messages, combined time/date).*<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
-*1. The compiled file bin file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme.<br>
+*1. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme.<br>
 2. With core 3 I faced some issues with http client occuring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
 Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
