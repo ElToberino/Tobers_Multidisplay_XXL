@@ -83,18 +83,18 @@ I want to use a small display with few modules. Will it work?<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
 *1. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme.<br>
-2. With core 3 I faced some issues with http client occuring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
+2. With core 3 I faced some issues with http client occurring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
 Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
-*No. This is not a fork but a completely new version of the program with different files. Erase chip completely und do a clean fresh install.*<br>
+*No. This is not a fork but a completely new version of the program with different files. Erase chip completely and do a clean, fresh install.*<br>
 <br>
 Where are the English html files?<br>
-*To keep it simple I do not provide two versions of the html files (as you now it from the former version).<br> 
-As an expert you can easily adopt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
+*To keep it simple I do not provide two versions of the html files (as you know it from the former version).<br> 
+As an expert you can easily adapt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
 Of course the English language version for the messages on display is still implemented.*<br>
 <br>
 Why can I choose on "Musikinfo" between Spotify, Castweb and Info extern?<br>
-*The support of Castweb is experimental and not recommended. It bases on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
+*The support of Castweb is experimental and not recommended. It is based on on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
 Info extern is a simple API of my program: You can send a simple json string containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this string as music information. Take a look at the code for further information.*<br>
 <br>
 Which API do you prefer?<br>
@@ -102,7 +102,7 @@ Which API do you prefer?<br>
 Concerning weather you should find out, which API delivers the most precise current weather and forecast for your location. In my use case open-meteo is more precise, but the answer depends on your location.*<br>
 <br>
 Can I report issues? You wrote there is no support.<br> 
-*Of course. No support means that I can not provide individual help for setup, API accounts, Spotify authentication etc. There are very detailed explainations with former Tobers Multidisplay which is still supported. This is the advanced version of this program and not a beginner project.*<br>
+*Of course. No support means that I can not provide individual help for setup, API accounts, Spotify authentication etc. There are very detailed explanations with former Tobers Multidisplay which is still supported. This is the advanced version of this program and not a beginner project.*<br>
 <br>
 <br>
 **Credits**<br>
