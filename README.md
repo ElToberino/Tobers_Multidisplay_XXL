@@ -57,16 +57,15 @@ SPOTIFY: premium account AND [developer registration of your device](https://dev
 
 **Setup**<br>
 All settings required have to be done on top of the code in the /// USER SETTINGS /// section. All other configuration is done during runtime via config.html.<br>
+<br>
 
 **Messages (admin.html)**<br>
 All messages are set via admin.html.<br> 
 The first message and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
 <br>
 <img src="showcase/admin.jpg" width="500"><br>
-"Update Message" sends your configuration to display.
+"Update Messagse" sends your configuration to display.<br>
 "With "Save Current" und "Load Saved" you can save/load your configuration into/from five presets. Preset 0 is loaded on startup.
- <br>
-On this site changes are only saved persistently saved to file by clicking "Save Current".<br>
 <br>
 <br>
 
@@ -80,6 +79,7 @@ On this site changes are only saved persistently saved to file by clicking "Save
  <br>
  <img src="showcase/time.jpg" width="500"><br>
  Set Time Mode<br>
+ <br>
  <img src="showcase/service.jpg" width="500"><br>
  Enable or Disable Sevice Message<br>
  <br>
@@ -103,13 +103,15 @@ Clicking "Display" on top of the site reveals detailed information of the device
 **APIs (api.html)**<br>
 <img src="showcase/api_site.jpg" width="500"><br>
 On api.html you can change newssources and weather coordinates.<br>
-Active API(s) as configured on config.html are the green ones. Inactive APIs (red) can also be configured.
-There are also Logs available for all API calls including ime erver call.
+Active API(s) as configured on config.html are the green ones. Inactive APIs (red) can also be configured.<br>
+There are also logs available for all API calls including time server call.<br>
 Note: On this site changes are only saved persistently to file by clicking "Save Current".<br>
+<br>
 <br>
 **Spotify**<br>
 Please note that Spotify has recently limited the lifetime of the refreshtoken; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refreshtoken in the Music Api Log on api.html.<br>
-If you have problems connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
+<br>
+If you get problems connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
 <br><br><br>
 **FAQ**<br>
 Why don't you provide a tutorial for setting up the display?<br>
