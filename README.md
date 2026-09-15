@@ -24,7 +24,7 @@ Please note: This is not a fork but a completely new version, so updating via OT
 - optional combined date and time mode for large displays
 - optional time with seconds during message loop
 - shuffle mode for text effects and graphic animations
-- multiple file upload and download (SPIFFS), support of gzip files
+- multiple file upload (SPIFFS), support of gzip files
 
 **Under the hood:**
 * lots of optimizations (String handling, Wifi, Time, dynamic html, ...) and code simplifications.
@@ -64,8 +64,8 @@ All messages are set via admin.html.<br>
 The first message and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
 <br>
 <img src="showcase/admin.jpg" width="500"><br>
-"Update Messagse" sends your configuration to display.<br>
-"With "Save Current" und "Load Saved" you can save/load your configuration into/from five presets. Preset 0 is loaded on startup.
+"Update Messages" sends your message configuration to display.<br>
+"With "Save Current" und "Load Saved" you can save/load your message configuration into/from five presets. Preset 0 is loaded on startup.
 <br>
 <br>
 
@@ -93,7 +93,7 @@ The first message and the first graphic slot are stand alone slots if all other 
  Set Refresh Intervals<br>
 <br>
 <img src="showcase/htmlauth.jpg" width="500"><br>
-Enable or Disable and Configure HTML Authentication for private Sites<br>
+Enable or Disable and Configure HTML Authentication for private sites<br>
 <br>
 Note: All settings made via config.html are automatically saved to file.<br>
 Clicking "Display" on top of the site reveals detailed information of the device.<br>
@@ -102,8 +102,12 @@ Clicking "Display" on top of the site reveals detailed information of the device
 
 **APIs (api.html)**<br>
 <img src="showcase/api_site.jpg" width="500"><br>
-On api.html you can change newssources and weather coordinates.<br>
+On api.html you can change news sources and weather coordinates.<br>
 Active API(s) as configured on config.html are the green ones. Inactive APIs (red) can also be configured.<br>
+<img src="showcase/api_weath.jpg" width="500"><br>
+Location for weather data is determined by longitude und latitude. As this is very precise (depending on API and its used forecast model) the name of the location must be set manually.<br>
+Good sites for getting coordinates are - for example - [www.laengengrad-breitengrad.de](https://www.laengengrad-breitengrad.de/) or [gpskoordinaten.de/](https://www.gpskoordinaten.de) <br>
+<br>
 There are also logs available for all API calls including time server call.<br>
 Note: On this site changes are only saved persistently to file by clicking "Save Current".<br>
 <br>
@@ -149,7 +153,7 @@ This project wouldn't have been possible without the work of many others:
 * Special thanks to Marco Colli (MajicDesigns) for his libraries, the excellent documentation and the support via arduino forum
 * Special thanks to Benoit Blanchon for his great Arduino Json Library and his friendly support
 * Local language concept and some parts of weather functions inspired by ericBcreator and his [really nice display project](https://www.hackster.io/ericBcreator/1024-led-matrix-wifi-message-board-with-menu-web-interface-1b2666)
-* SPIFFS administration taken and adopted from the great Arduino ESP website https://fipsok.de/ by Jens Fleischer
+* SPIFFS administration taken and adapted from the great Arduino ESP website https://fipsok.de/ by Jens Fleischer
 * HTML background pattern graphic by Henry Daubrez, taken from http://thepatternlibrary.com/ <br>
 
 Thanks to the many, many other programmers and enthusiasts in the web whose work and helpfulness enabled me to realize such a project.<br>
