@@ -19,6 +19,7 @@ Please note: This is not a fork but a completely new version, so updating via OT
 - graphic animations (as shown in the "Daft Punk" example in [MD_MAX72xx Library](https://github.com/MajicDesigns/MD_MAX72XX/blob/main/examples/MD_MAX72xx_DaftPunk/MD_MAX72xx_DaftPunk.ino), a video is [here](https://www.youtube.com/watch?v=UVcUQzxbfUM))<br>
 - service messages (example: "News Service" is shown before news message)
 - support of LDR sensor for automatic brightness setting
+- five presets for message configuration
 - different APIs, all configurable during runtime
 - API-Logs
 - optional combined date and time mode for large displays
@@ -61,7 +62,7 @@ All settings required have to be done on top of the code in the /// USER SETTING
 
 **Messages (admin.html)**<br>
 All messages are set via admin.html.<br> 
-The first message and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Standalone graphic means that the graphic chosen is repeated indefinitely.<br>
+The first message and the first graphic slot are stand alone slots if all other slots are deactivated. Stand alone message means that the message sent is printed on display (static) and will stay there. Stand alone graphic means that the graphic chosen is repeated indefinitely.<br>
 <br>
 <img src="showcase/admin.jpg" width="500"><br>
 "Update Messages" sends your message configuration to display.<br>
@@ -119,7 +120,7 @@ If you get problems connecting to Spotify, please check if the TLS certificates 
 <br><br><br>
 **FAQ**<br>
 Why don't you provide a tutorial for setting up the display?<br>
-*This is the expert version of my Multidisplay. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please note that there is no support for this expert version.*<br>
+*This is the expert version of my program. Users should know how Tobers Multidisplay works and understand what's happening under the hood before using this expert version. Please note that there is no support for this expert version.*<br>
 <br>
 I want to use a small display with few modules. Will it work?<br>
 *Sure. This XXL version has some functions designed for larger displays, but you can easily deactivate them if they don't fit on your display (service messages, combined time/date).*<br>
@@ -136,9 +137,9 @@ Where are the English html files?<br>
 As an expert you can easily adapt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
 Of course the English language version for the messages on display is still implemented.*<br>
 <br>
-Why can I choose on "Musikinfo" between Spotify, Castweb and Info extern?<br>
+Why can I choose on slot "Musikinfo" between Spotify, Castweb and Info extern?<br>
 *The support of Castweb is experimental and not recommended. It is based on on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
-Info extern is a simple API of my program: You can send a simple json string containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this string as music information. Take a look at the code for further information.*<br>
+Info extern is a simple API of my program: You can send form data containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this as music information. Take a look at function parseMusicInfo() for further information.*<br>
 <br>
 Which API do you prefer?<br>
 *As always - it depends.. Take a look at the API features and decide which one meets your requirements better. Testing is easy as APIs and news sources can be changed during runtime. But keep in mind the daily call limits of the APIs.<br>
@@ -153,8 +154,8 @@ This project wouldn't have been possible without the work of many others:
 * Special thanks to Marco Colli (MajicDesigns) for his libraries, the excellent documentation and the support via arduino forum
 * Special thanks to Benoit Blanchon for his great Arduino Json Library and his friendly support
 * Local language concept and some parts of weather functions inspired by ericBcreator and his [really nice display project](https://www.hackster.io/ericBcreator/1024-led-matrix-wifi-message-board-with-menu-web-interface-1b2666)
-* SPIFFS administration taken and adapted from the great Arduino ESP website https://fipsok.de/ by Jens Fleischer
-* HTML background pattern graphic by Henry Daubrez, taken from http://thepatternlibrary.com/ <br>
+* SPIFFS administration taken and adapted from the great Arduino ESP website https://fipsok.de by Jens Fleischer
+* HTML background pattern graphic by Henry Daubrez, taken from http://thepatternlibrary.com <br>
 
 Thanks to the many, many other programmers and enthusiasts in the web whose work and helpfulness enabled me to realize such a project.<br>
 
