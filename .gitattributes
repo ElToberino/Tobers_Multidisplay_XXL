@@ -1,3 +1,3 @@
 # Ordner von Release-Archiven ausschließen
 /showcase/ export-ignore
-"/additional files/" export-ignore
+/additional_files/ export-ignore
