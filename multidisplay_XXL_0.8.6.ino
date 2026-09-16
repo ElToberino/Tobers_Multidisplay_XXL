@@ -989,7 +989,7 @@ void wificonnect() {
    #endif
     P.print("no Wifi --> AP");
     WiFiManager wifiManager;
-    //wifiManager.useLittleFS();   Test 7.4                                // enables wifi manager loading files from LittleFS instead of SPIFFS
+ 
    #ifndef SPOTIFY                                                         // this doesn't work with SPOTIFY defined on ESP32 !
     wifiManager.setAPStaticIPConfig(AP_IP, AP_IP, AP_Netmask);             // if #define SPOTIFY default ESP IP 192.168.4.1 is set
    #endif
@@ -1220,7 +1220,7 @@ void getTimeFromServer(){
   #else
     if (esp_sntp_get_sync_status() == SNTP_SYNC_STATUS_COMPLETED){
   #endif  
-    time_t now = time(NULL);              // Saubere Zuweisung!
+    time_t now = time(NULL);
     localtime_r(&now, &initial);
    }
 
@@ -1247,7 +1247,7 @@ void getTimeFromServer(){
     strftime (stamp, sizeof(stamp), "%d.%m.%y <br> %H:%M:%S", &tm);                                                       
     snprintf(timeServerLog[timeLogCounter], sizeof(timeServerLog[timeLogCounter]), "%s %s &#10060;", stamp, ntpServer);   
   } else {
-    time_t now = time(NULL);            // Saubere Zuweisung!
+    time_t now = time(NULL);
     localtime_r(&now, &tm);
     strftime (timeSaver, sizeof(timeSaver), "%H:%M", &tm);                          // required for combined time and date mode
     strftime (stamp, sizeof(stamp), "%d.%m.%y <br> %H:%M:%S", &tm);                                                      
