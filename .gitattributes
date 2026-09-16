@@ -1,3 +1,6 @@
 # Ordner von Release-Archiven ausschließen
 /showcase/ export-ignore
 /additional_files/ export-ignore
+
+# Einzelne Dateien ausschließen
+README.md export-ignore
