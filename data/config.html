@@ -1,0 +1,702 @@
+﻿<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Konfiguration</title>
+	<STYLE>
+		.configsuccess {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding-top: 0.2em;
+			padding-bottom: 0.3em;
+			padding-left: 1em;
+			padding-right: 0.4em;
+			font-size: 80%;
+			background-color: #f6b54d;
+			text-align: left;
+			color: #af601a;
+			border: 0.2em solid green;
+		}
+
+		.configfault {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding-top: 0.2em;
+			padding-bottom: 0.3em;
+			padding-left: 1em;
+			padding-right: 0.4em;
+			font-size: 80%;
+			background-color: #f6b54d;
+			text-align: left;
+			color: #af601a;
+			border: 0.2em solid red;
+		}
+
+		.configknopfInvisible {
+			display: inline;
+			width: 4em;
+			text-align: left;
+			background-color: #f6b54d;
+			border: 0.1em solid #f6b54d;
+			margin-left: 0.2em;
+			padding-top: 0.4em;
+			padding-bottom: 0.4em;
+			padding-left: 0.5em;
+			font-size: 100%;
+			color: #af601a;
+		}
+		
+		.info {
+		margin-top: 0.3em;
+		}
+	</STYLE>
+	<SCRIPT>
+
+		var NewsDelaytime = 1000;					
+		var success = false;
+
+
+		window.addEventListener('load', () => {
+
+			populateIntervals();				// <--- NEW: Generate 10-120 options
+			once(10);							
+
+		})
+
+
+
+
+		function populateIntervals() {
+			var targets = ['MyEnableInt_N', 'MyEnableInt_W', 'MyEnableInt_T'];
+			for (var j = 0; j < targets.length; j++) {
+				var sel = document.getElementById(targets[j]);
+				if (sel) {
+					//sel.innerHTML = ""; // Clear any existing
+					for (var i = 10; i <= 120; i += 10) {
+						var opt = document.createElement('option');
+						opt.value = i;
+						opt.innerHTML = i;
+						sel.appendChild(opt);
+					}
+				}
+			}
+		}
+
+
+		function once(delaytime, infotext, kastl) {
+
+			setTimeout(function () {
+				fetch('/showConfig')
+					.then(response => {
+						return response.json()
+					})
+					.then(data => {
+
+						document.getElementById("Time").innerHTML = formatTime(data.Minutes);
+						document.getElementById("SetIn").value = data.Intens;
+						document.getElementById("SetSpeed").value = data.Speed;
+						document.getElementById("SSID").innerHTML = data.SSID;
+						document.getElementById("IP").innerHTML = data.IP;
+						document.getElementById("newNTP").value = data.NTP;
+						document.getElementById("SetTimeXXL").value = data.EnableTimeXXL;
+						document.getElementById("SetTimeDur").value = data.TimeDuration;
+						document.getElementById("SetApi").value = data.NewsApiType;
+						document.getElementById("SetApiW").value = data.WeathApiType;
+						document.getElementById("user").value = data.USER;
+						document.getElementById("password").value = data.PW;
+						document.getElementById("MyEnableInt_N").value = data.N_Refresh;
+						document.getElementById("MyEnableInt_W").value = data.W_Refresh;
+						document.getElementById("MyEnableInt_T").value = data.T_Refresh;
+
+
+
+						var titel = "Konfiguration - " + data.Name;
+						document.title = titel;
+						document.getElementById("device").innerHTML = data.Name;
+						document.getElementById("newName").value = data.Name;
+
+						if (data.EnableXL == 0) {                                             //sets checkboxes according to received values
+							document.getElementById("CheckXL").checked = "";
+						}
+						else {
+							document.getElementById("CheckXL").checked = "checked";
+						}
+						document.getElementById("EnableXL").value = data.EnableXL;
+
+						if (data.EnableService == 0) {                                             //sets checkboxes according to received values
+							document.getElementById("CheckService").checked = "";
+						}
+						else {
+							document.getElementById("CheckService").checked = "checked";
+						}
+						document.getElementById("EnableService").value = data.EnableService;
+
+						if (data.EnableAuth == 0) {                                             //sets checkboxes according to received values
+							document.getElementById("CheckAuth").checked = "";
+						}
+						else {
+							document.getElementById("CheckAuth").checked = "checked";
+						}
+						document.getElementById("EnableAuth").value = data.EnableAuth;
+
+
+
+						if (infotext) {
+							document.getElementById("showbox").innerHTML = infotext;
+							document.getElementById("showbox").className = "configgreen";
+							kastl.className = "configsuccess";
+							setTimeout(() => {
+								document.getElementById("showbox").className = "configinvisible";
+							}, 8000);
+							setTimeout(() => {
+								kastl.className = "config";
+							}, 5000);
+						}
+						console.log(data)
+					})
+					.catch(err => {
+						document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display!";
+						document.getElementById("showbox").className = "configred";
+					})
+			}, delaytime);
+		}
+		
+		
+		function formatTime(totalMinutes) {
+			if (totalMinutes < 60) {
+				return totalMinutes + " Minuten";
+			}
+			const days = Math.floor(totalMinutes / (24 * 60));				// Math.floor schneidet Nachkommastellen ab
+			const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+			const mins = totalMinutes % 60;
+			if (days > 0) {
+				var daynum;
+				if (days == 1) daynum = " Tag &nbsp;"; else daynum = " Tagen &nbsp;";
+				return "<br><span style='margin-left:7em;'>" + days + daynum + hours + " Std &nbsp;" + mins + " Min</span>";
+			} else {
+				return hours + " Std &nbsp;" + mins + " Min";
+			}
+		}
+
+
+		function trick(id, max, form, info) {
+			document.getElementById(form).children[0].className = "config";
+			var versuch = document.getElementById(id).value;
+			var versuch2 = document.getElementById(id).value;
+			if (form == "formuAuth") versuch2 = document.getElementById("password").value;
+			var toberREGEX = /[\}\{\\\"]/;                                 //siehe Simulator auf https://www.regextester.com/97777
+			if (versuch.length <= Number(max) && versuch2.length <= Number(max)) {
+				var result = toberREGEX.test(versuch);
+				var result2 = toberREGEX.test(versuch2);
+				if (result == true || result2 == true) {
+					document.getElementById("showbox").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+					document.getElementById("showbox").className = "configred";
+					document.getElementById(form).children[0].className = "configfault";
+				}
+				else {
+					if (form == "formuAuth") SendeFunctionAdvanced(form, info);
+					else SendeFunction(form, info);
+				}
+			} else {
+				document.getElementById("showbox").innerHTML = "Es sind maximal " + max + " Zeichen erlaubt!";
+				document.getElementById("showbox").className = "configred";
+				document.getElementById(form).children[0].className = "configfault";
+			}
+		}
+
+		function SendeFunction(form, info) {
+			document.getElementById(form).submit();
+			once(200, info, document.getElementById(form).children[0]);
+		}
+
+
+		function SendeFunctionAdvanced(form, msg) {
+			//transforms "checked" attributes to values in hidden input:
+			if (form == "formuAuth") form = "Auth";											// special case authentication form
+			if (document.getElementById("Check" + form).checked == true) { document.getElementById("Enable" + form).value = 1; }    //transforms "checked" attributes to values in hidden input
+			else { document.getElementById("Enable" + form).value = 0; }
+			document.getElementById("formu" + form).submit();									// special case authentication form
+			if (form == "Auth") once(200, msg, document.getElementById("formu" + form).children[0]);
+			else once(NewsDelaytime, msg, document.getElementById("formu" + form).parentElement.parentElement);
+		}
+
+
+
+		function confirmSender(text, form, info) {
+			var check = confirm(text);
+			if (check == true) {
+				document.getElementById(form).submit();
+				setTimeout(function () {
+					document.getElementById("showbox").innerHTML = info;
+					document.getElementById("showbox").className = "configgreen";
+					document.getElementById(form).children[0].className = "configsuccess";
+				}, 100);
+				if (form == "formu3") {
+					setTimeout(function () {
+						document.getElementById("showbox").innerHTML = "Display wurde neu gestartet";
+						document.getElementById(form).children[0].className = "config";
+					}, 8000);
+					once(0);
+				} else {
+					setTimeout(() => {
+						document.getElementById(form).children[0].className = "config";
+					}, 5000);
+				}
+			}
+		}
+
+
+		function goURL(loc) {
+			window.location = loc;
+		}
+		
+		function populateDeviceInfo() {		 
+          fetch('/showDeviceInfo')
+			  .then(response => {
+				return response.json()
+				})
+              .then(data => {
+				document.getElementById("RSSI").innerHTML = data.RSSI;
+				document.getElementById("Heap").innerHTML = data.Heap;
+				document.getElementById("Alloc").innerHTML = data.Alloc;
+				document.getElementById("CPU").innerHTML = data.CPU;
+				
+				document.getElementById("deviceInfo").style.display = "";
+				console.log(data)
+				})
+
+			.catch(err => {
+                document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display!";
+				document.getElementById("showbox").className = "configred";
+				})
+		}
+
+		function showInfo() {
+			if (document.getElementById("deviceInfo").style.display == "none")
+				populateDeviceInfo();
+			else
+				document.getElementById("deviceInfo").style.display = "none";
+		}
+
+
+
+	</SCRIPT>
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="device">
+				<nobr>&nbsp;</nobr>
+			</h1>
+
+			<h2 style="margin-bottom:-0.8em;">Konfiguration</h2><br>
+			<p>
+
+			<div id="showbox" class="configinvisible"><span id="ownmessage">0</span></div>
+			<div class="showconf" style="padding-top:0.3em; padding-bottom:0.3em;">
+			<div><a href="#" class="spiffslink" style="margin-right:1em; padding:0; width:6em; display:inline-block; cursor:default;" onclick="showInfo();" >Display: </a><span style="color:#af601a; font-style:italic;">in Betrieb seit &nbsp;</span><span id="Time">0</span></div>
+			<div id="deviceInfo" style="display:none">
+			<div><span class="innershowconf info">Netzwerk: </span><span id="SSID">0</span></div>
+			<div><span class="innershowconf info">IP-Adresse: </span><span id="IP">0</span></div>
+			<div><span class="innershowconf info">RSSI: </span><span id="RSSI">0</span> dBm</div>
+			<div><span class="innershowconf info">Free Heap: </span><span id="Heap">0</span></div>
+			<div><span class="innershowconf info">Max Alloc: </span><span id="Alloc">0</span></div>
+			<div><span class="innershowconf info">CPU: </span><span id="CPU">0</span> MHz</div>
+			</div>
+			</div>
+
+			<FORM id="formu" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+
+					<div style="display:inline-block;">
+						<input type="button" onclick="SendeFunction('formu','Leuchtstärke gesetzt!')"
+							class="configknopf" value="Set Intensity">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Leuchtstärke setzen
+					</div>
+
+					<div style="display: inline-block;">
+						<select id="SetIn" type="text" name="newIntens" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0.1em; width:3em; font-size:105%;">
+							<option value="99">Au</option>
+							<option value="0">0</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+						</select>
+					</div>
+
+				</div>
+			</form>
+
+			<FORM id="formuSP" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+
+					<div style="display:inline-block;">
+						<input type="button" onclick="SendeFunction('formuSP','Geschwindigkeit gesetzt!')"
+							class="configknopf" value="Set Speed">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Scrollspeed setzen &nbsp;
+					</div>
+
+					<div style="display: inline-block;">
+						<select id="SetSpeed" type="text" name="newSpeed" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0.1em; width:3em; font-size:105%;">
+							<option value="10">1</option>
+							<option value="9">2</option>
+							<option value="8">3</option>
+							<option value="7">4</option>
+							<option value="6">5</option>
+							<option value="5">6</option>
+							<option value="4">7</option>
+							<option value="3">8</option>
+							<option value="2">9</option>
+							<option value="1">10</option>
+						</select>
+					</div>
+				</div>
+			</form>
+
+			<FORM id="DName" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+					<div style="display:inline-block;">
+						<input type="button" onclick="trick('newName', '24', 'DName', 'Display-Name gesetzt!')"
+							class="configknopf" value="Set Name">
+					</div>
+					<input id="newName" class="innerproform" style="margin-left: 0.8em;" type="text" name="DeviceName"
+						pattern="[^\{\}\x22\\]+" maxlength="24" value="">
+				</div>
+			</form>
+
+
+			<FORM id="formuTimeXXL" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+					<div style="display:inline-block;">
+						<input type="button" onclick="SendeFunction('formuTimeXXL','Zeit-Modus gesetzt')"
+							class="configknopf" value="Set Time XXL">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Modus&nbsp;
+					</div>
+					<div style="display: inline-block;">
+						<select id="SetTimeXXL" type="text" name="MyEnableTimeXXL" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:9em; font-size:105%;">
+							<option value="1">Zeit und Datum</option>
+							<option value="0">Zeit normal</option>
+							<option value="2">Zeit mit Sek</option>
+						</select>
+					</div>
+					<div style="display: inline-block;" class="configright">
+						&nbsp;S
+					</div>
+					<div style="display: inline-block;">
+						<select id="SetTimeDur" type="text" name="MyEnableTimeDur" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:3em; font-size:105%;">
+							<option value="6">3</option>
+							<option value="8">4</option>
+							<option value="10">5</option>
+							<option value="12">6</option>
+							<option value="14">7</option>
+							<option value="16">8</option>
+							<option value="18">9</option>
+							<option value="20">10</option>
+							<option value="22">11</option>
+							<option value="24">12</option>
+							<option value="26">13</option>
+							<option value="28">14</option>
+							<option value="30">15</option>
+							<option value="32">16</option>
+							<option value="34">17</option>
+							<option value="36">18</option>
+							<option value="38">19</option>
+							<option value="40">20</option>
+						</select>
+					</div>
+				</div>
+			</form>
+
+
+			
+
+			<div class="config" style="padding-top:0.4em; padding-bottom:0.3em;">
+				<div style="display: inline-block; float:left;">
+					<FORM id="formuService" METHOD="POST" action="/postConfig" target="hiddenFrame"
+						style="margin:0; padding:0;">
+						<input type="button" onclick="SendeFunctionAdvanced('Service', 'Service Message konfiguriert')"
+							class="configknopf" value="Set Service Msg">
+				</div>
+				<div style="float:left; margin:0.35em 0em 0em 0.8em;" class="configright">
+					Service Message
+				</div>
+				<div style="float:left; margin:0.45em 0em 0em 0.7em; font-weight:bold; color:#f6b54d;">
+					XL
+				</div>
+				<div style="display: inline-block;">
+					<label class="switchConfig" style="margin-bottom:0em;">
+						<input type="checkbox" class="hiddenBox" id="CheckService" checked="">
+						<span class="slider"></span>
+					</label>
+					<input id="EnableService" type="hidden" name="MyEnableService" value="">
+				</div>
+				</form>
+			</div>
+
+
+			
+
+			<div class="config" style="padding-top:0.4em; padding-bottom:0.8em;">
+				<div style="display: inline-block; float:left;">
+					<FORM id="formuXL" METHOD="POST" action="/postConfig" target="hiddenFrame"
+						style="margin:0; padding:0;">
+						<input type="button" onclick="SendeFunctionAdvanced('XL', 'News werden neu geladen')"
+							class="configknopf" value="Refresh News">
+				</div>
+				<div style="float:left; margin:0.35em 0em 0em 0.8em;" class="configright">
+					News neu laden
+				</div>
+				<div style="float:left; margin:0.45em 0em 0em 1.2em; font-weight:bold;">
+					XL
+				</div>
+				<div style="float:left;">
+					<label class="switchConfig" style="margin-bottom:0em;">
+						<input type="checkbox" class="hiddenBox" id="CheckXL" checked="">
+						<span class="slider"></span>
+					</label>
+					<input id="EnableXL" type="hidden" name="MyEnableXL" value="">
+				</div>
+				<div style="display:inline;">
+					<select id="SetApi" type="text" name="ApiType" value="" class="innerproform"
+						style=" margin:0.3em 0em 0em 0.2em; width:10em; font-size:90%;">
+						<option value="0">newsapi.org</option>
+						<option value="1">thenewsapi.com</option>
+						<option value="99">alle - wechselnd</option>
+					</select>
+				</div>
+				</form>
+			</div>
+
+
+			<FORM id="formu2" METHOD="POST" action="/postConfig" target="hiddenFrame" style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button" onclick="SendeFunction('formu2','Wetter wird neu geladen')"
+							class="configknopf" value="Refresh Weath">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Wetter-Api&nbsp;
+					</div>
+					<div style="display: inline-block;">
+						<select id="SetApiW" type="text" name="ApiTypeW" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:11em; font-size:105%;">
+							<option value="0">openweathermap.org</option>
+							<option value="1">open-meteo.com</option>
+							<option value="99">alle - wechselnd</option>
+						</select>
+					</div>
+				</div>
+			</form>
+
+
+			<FORM id="NTP" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+					<div style="display:inline-block;">
+						<input type="button" onclick="trick('newNTP', '40', 'NTP', 'NTP-Server gesetzt!')"
+							class="configknopf" value="Set NTP Server">
+					</div>
+					<input id="newNTP" class="innerproform" style="margin-left: 0.8em;" type="text" name="NTP"
+						pattern="[^\{\}\x22\\]+" maxlength="40" value="">
+				</div>
+			</form>
+
+
+			<FORM id="formuInterval" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+					<div style="display:inline-block;">
+						<input type="button" onclick="SendeFunction('formuInterval','Refresh-Intervall gesetzt')"
+							class="configknopf" value="Set Interval">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						&nbsp;News
+					</div>
+					<div style="display: inline-block;">
+						<select id="MyEnableInt_N" type="text" name="MyEnableInt_N" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:3em; font-size:105%;">
+						</select>
+					</div>
+					<div style="display: inline-block;" class="configright">
+						&nbsp;Weath
+					</div>
+					<div style="display: inline-block;">
+						<select id="MyEnableInt_W" type="text" name="MyEnableInt_W" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:3em; font-size:105%;">
+						</select>
+					</div>
+					<div style="display: inline-block;" class="configright">
+						&nbsp;Time
+					</div>
+					<div style="display: inline-block;">
+						<select id="MyEnableInt_T" type="text" name="MyEnableInt_T" value="" class="innerproform"
+							style="margin:0.2em 0em 0em 0em; width:3em; font-size:105%;">
+						</select>
+					</div>
+				</div>
+			</form>
+
+
+
+			<FORM id="formuAuth" METHOD="POST" action="/postConfig" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config" style="display:flex; flex-wrap:wrap; align-items:center; min-height:4.4em;">
+					<div style="flex-shrink:0;">
+						<input type="button" onclick="trick('user', '20', 'formuAuth', 'Authentifizierung gesetzt!')"
+							class="configknopf" value="Set Auth">
+					</div>
+					<div style="margin-left:0.3em;">
+						<div style="display:flex; align-items:center; margin-bottom:0.2em;">
+							<input type="button" tabindex="-1" class="configknopfInvisible" value="Name">
+							<input id="user" class="innerproform" style="width:10em;" type="text" name="USER"
+								pattern="[^\{\}\x22\\]+" maxlength="20" value="">
+						</div>
+						<div style="display:flex; align-items:center;">
+							<input type="button" tabindex="-1" class="configknopfInvisible" value="Passw">
+							<input id="password" class="innerproform" style="width:10em;" type="text" name="PW"
+								pattern="[^\{\}\x22\\]+" maxlength="20" value="">
+						</div>
+					</div>
+					<div style="flex-shrink:0; margin-left:1em;">
+						<label class="switchConfig" style="margin:0;">
+							<input type="checkbox" class="hiddenBox" id="CheckAuth" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableAuth" type="hidden" name="MyEnableAuth" value="">
+					</div>
+				</div>
+			</form>
+
+
+
+
+			<FORM id="formu3" METHOD="POST" action="/reset" target="hiddenFrame" style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button"
+							onclick="confirmSender('Soll das Gerät wirklich neu gestartet werden?', 'formu3', 'Display wird neu gestartet!')"
+							class="configknopf" value="Restart Device">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						ESP neu starten
+					</div>
+				</div>
+			</form>
+
+
+			<FORM id="formu4" METHOD="POST" action="/ex" target="hiddenFrame" style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button"
+							onclick="confirmSender('Sollen wirklich die WiFi-Logins gelöscht werden? \nGerät startet dann im AP-Modus.', 'formu4', 'WiFi-Daten gelöscht!<br>Display wird als AP neu gestartet')"
+							class="configknopf" value="Erase WiFi-Data">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						WiFi-Login Daten löschen
+					</div>
+				</div>
+			</form>
+
+
+			<div style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button" onclick="goURL('castweb.html')" class="configknopf" value="Cast Web">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Google Cast Verwaltung
+					</div>
+				</div>
+			</div>
+
+
+			<div style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button" onclick="goURL('api.html')" class="configknopf" value="APIs">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						API Verwaltung
+					</div>
+				</div>
+			</div>
+
+
+			<div style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button" onclick="goURL('ota.html')" class="configknopf" value="OTA">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Over the Air Update
+					</div>
+				</div>
+			</div>
+
+
+			<div style="margin:0; padding:0;">
+				<div class="config">
+					<div style="display: inline-block;">
+						<input type="button" onclick="goURL('about.html')" class="configknopf" value="About">
+					</div>
+					<div style="display: inline-block;" class="configright">
+						Informationen zum Programm
+					</div>
+				</div>
+			</div>
+
+
+			<div>
+				<div class="promenu"><a class="prolink" href="admin.html">Admin</a></div>
+				<div class="promenu">Config</div>
+				<div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+				<div class="promenu"><a class="prolink" href="news.html">News</a></div>
+				<div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+				<div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+				<div class="promenu"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+		</div>
+	</div>
+	<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+</body>
+
+</html>
