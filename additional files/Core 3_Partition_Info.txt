@@ -1,9 +1,0 @@
-
-/// ONLY FOR CORE 3 USERS ///
-
-As explained in README with V3 of Arduino Core for ESP32 the compiled binary file has become too large.
-It doesn't fit into standard partition scheme. (1.2 MB APP/1.2MB OTA)
-
-Using V3 (which is not recommended) requires a custom partition table.
-You can use the one I created. Just put the file "partitions.csv" into your sketch folder (Tobers_Multifidplay_XXL_) before starting Arduino IDE. It will recognize the custom partition table and use it.
-
