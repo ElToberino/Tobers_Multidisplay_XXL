@@ -10,10 +10,9 @@ for further information see: https://github.com/ElToberino/Tobers_Multidisplay_X
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="Cache-control" content="no-cache">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>404</title>
-  <SCRIPT>                 // accept file type: https://stackoverflow.com/questions/11832930/html-input-file-accept-attribute-file-type-csv
-                           //see: https://stackoverflow.com/questions/43708127/javascript-get-the-filename-and-extension-from-input-type-file
-						   //and  https://stackoverflow.com/questions/190852/how-can-i-get-file-extensions-with-javascript/1203361#1203361
+    <title>OTA nicht aktiviert</title>
+	
+	<SCRIPT>
 		window.addEventListener('load', () => {
 		loadName();
 		 })
@@ -24,7 +23,7 @@ for further information see: https://github.com/ElToberino/Tobers_Multidisplay_X
 				return response.json()
 				})
               .then(data => {
-			    var titel = "404 - " + data.Name;
+			    var titel = "OTA nicht aktiviert - " + data.Name;
 			    document.title = titel;
 				document.getElementById("device").innerHTML = data.Name;
 				console.log(data)
@@ -35,6 +34,7 @@ for further information see: https://github.com/ElToberino/Tobers_Multidisplay_X
 				})
 		}
 </SCRIPT>
+  
 </head>
 <body>
 
@@ -45,7 +45,7 @@ for further information see: https://github.com/ElToberino/Tobers_Multidisplay_X
 
 <h2>Fehler</h2><br>
 <p>
-<div class="error">Die aufgerufene Seite existiert nicht !</div>
+<div class="error">Over the Air Update (OTA) ist nicht aktiviert !</div>
 <div style="text-align:center; color:white;">
 <a href="index.html" style="outline:none;"><div class="knopflink">Message</div></a>
 <a href="news.html" style="outline:none;"><div class="knopflink">News</div></a>

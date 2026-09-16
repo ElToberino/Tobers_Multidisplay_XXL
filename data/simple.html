@@ -1,0 +1,572 @@
+<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Simple Control</title>
+    <style>
+        .speedRange {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 11em;
+            height: 0.4em;
+            background: #f6b54d;
+            border: 0.1em solid #af601a;
+            border-radius: 0.3em;
+            outline: none;
+            vertical-align: middle;
+        }
+
+        .speedRange::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 1.1em;
+            height: 1.1em;
+            border-radius: 50%;
+            background: #af601a;
+            cursor: pointer;
+            border: 0.15em solid white;
+        }
+
+        .speedRange::-moz-range-thumb {
+            width: 1.1em;
+            height: 1.1em;
+            border-radius: 50%;
+            background: #af601a;
+            cursor: pointer;
+            border: 0.15em solid white;
+        }
+
+        .kbdRow {
+            display: flex;
+            justify-content: center;
+            gap: 0.25em;
+            margin-bottom: 0.3em;
+            flex-wrap: nowrap;
+        }
+
+        .keybtn {
+            border: 0.1em solid #e1c3a9;
+            border-radius: 0.35em;
+            background-color: #af601a;
+            color: white;
+            font-size: 85%;
+            font-weight: bold;
+            padding: 0.4em 0.1em;
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+            user-select: none;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        @media (hover: hover) {
+            .keybtn:hover {
+                background-color: white;
+                color: #af601a;
+            }
+			.clearX:hover {
+				background: none !important;
+				background-color: transparent !important;
+				color: darkred !important;
+			}
+        }
+
+        .keybtn:active {
+            background-color: white;
+            transform: translateY(1px);
+        }
+
+        .keybtn-wide {
+            flex: 2;
+        }
+
+        .keybtn-space {
+            flex: 4;
+        }
+		
+		.clearX {
+			position: absolute;
+			right: 3%;
+			font-size: 80%;
+			padding: 0em 0.3em;
+			background: none;
+			border: none;
+			cursor: pointer;
+			color: red;
+			font-weight: bold;
+		}
+		
+		.clearX:active {
+			color: darkred;
+		}
+    </style>
+    <SCRIPT>
+
+        let isShift = true;
+
+        window.addEventListener('load', () => {
+            loadCurrentData(0, 10);
+            document.getElementById('scrollCheck').addEventListener('change', toggleScrollUI);
+            updateShiftUI();
+
+            document.getElementById('userInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendQuick();
+                }
+            });
+        });
+
+        function toggleScrollUI() {
+            const isScroll = document.getElementById('scrollCheck').checked;
+            document.getElementById('speedContainer').style.display = isScroll ? 'block' : 'none';
+        }
+
+        function updateSpeedVal(val) {
+            const d = parseInt(val, 10);
+            document.getElementById('speedValDisplay').innerText = d;
+            document.getElementById('MySpeed2').value = 11 - d;
+        }
+
+        function toggleShift() {
+            isShift = !isShift;
+            updateShiftUI();
+        }
+
+        function updateShiftUI() {
+            const shiftBtn = document.getElementById('shiftBtn');
+            if (shiftBtn) {
+                if (isShift) {
+                    shiftBtn.style.backgroundColor = "white";
+                    shiftBtn.style.color = "#af601a";
+                } else {
+                    shiftBtn.style.backgroundColor = "#af601a";
+                    shiftBtn.style.color = "white";
+                }
+            }
+            const letters = document.querySelectorAll('.letterKey');
+            letters.forEach(btn => {
+                const c = btn.getAttribute('data-char');
+                btn.innerText = isShift ? c.toUpperCase() : c.toLowerCase();
+            });
+            const shiftKeys = document.querySelectorAll('.shiftKey');
+            shiftKeys.forEach(btn => {
+                const lower = btn.getAttribute('data-lower');
+                const upper = btn.getAttribute('data-upper');
+                btn.innerText = isShift ? upper : lower;
+            });
+        }
+
+        function autoResizeInput() {
+            let inp = document.getElementById('userInput');
+            if (inp) {
+                inp.style.height = '1.8em';
+                if (inp.scrollHeight > inp.clientHeight) {
+                    inp.style.height = inp.scrollHeight + 'px';
+                }
+            }
+        }
+
+        function setCursorEnd(inp) {
+            if (inp) {
+                autoResizeInput();
+                if (inp.setSelectionRange) {
+                    const len = inp.value.length;
+                    inp.setSelectionRange(len, len);
+                }
+            }
+        }
+
+        function addChar(ch) {
+            let inp = document.getElementById('userInput');
+            inp.value += ch;
+            setCursorEnd(inp);
+        }
+
+        function addLetter(btn) {
+            const rawChar = btn.getAttribute('data-char');
+            const inputChar = isShift ? rawChar.toUpperCase() : rawChar.toLowerCase();
+            let inp = document.getElementById('userInput');
+            inp.value += inputChar;
+            setCursorEnd(inp);
+        }
+
+        function addShiftChar(btn) {
+            const char = isShift ? btn.getAttribute('data-upper') : btn.getAttribute('data-lower');
+            let inp = document.getElementById('userInput');
+            inp.value += char;
+            setCursorEnd(inp);
+        }
+
+        let backspaceTimer = null;
+        let backspaceInterval = null;
+
+        function startBackspace(e) {
+            if (e && e.cancelable) e.preventDefault();
+            backspaceChar();
+            stopBackspace();
+
+            backspaceTimer = setTimeout(() => {
+                backspaceInterval = setInterval(() => {
+                    let inp = document.getElementById('userInput');
+                    if (inp && inp.value.length > 0) {
+                        backspaceChar();
+                    } else {
+                        stopBackspace();
+                    }
+                }, 50);
+            }, 350);
+        }
+
+        function stopBackspace() {
+            if (backspaceTimer) {
+                clearTimeout(backspaceTimer);
+                backspaceTimer = null;
+            }
+            if (backspaceInterval) {
+                clearInterval(backspaceInterval);
+                backspaceInterval = null;
+            }
+        }
+
+        function backspaceChar() {
+            let inp = document.getElementById('userInput');
+            inp.value = inp.value.slice(0, -1);
+            setCursorEnd(inp);
+        }
+
+        function clearChar() {
+            let inp = document.getElementById('userInput');
+            inp.value = "";
+            setCursorEnd(inp);
+        }
+
+        function loadCurrentData(green, delaytime) {
+            setTimeout(function () {
+                fetch('/showAdvanced')
+                    .then(response => response.json())
+                    .then(data => {
+                        const isMsg2 = (data.Enable2 == 1);
+                        document.getElementById('scrollCheck').checked = isMsg2;
+                        toggleScrollUI();
+
+                        const rawSpeed = (data.Speed2 !== undefined && data.Speed2 !== "") ? parseInt(data.Speed2, 10) : 6;
+                        const displaySpeed = 11 - rawSpeed;
+                        document.getElementById('speedSlider').value = displaySpeed;
+                        document.getElementById('speedValDisplay').innerText = displaySpeed;
+                        document.getElementById('MySpeed2').value = rawSpeed;
+
+                        let inp = document.getElementById('userInput');
+                        let txt = isMsg2 ? (data.Text2 || "") : (data.Text0 || "");
+                        if (txt.length > 0 && !txt.endsWith(" ")) {
+                            txt += " ";
+                        }
+                        inp.value = txt;
+
+                        var titel = "Simple Control - " + data.Name;
+                        document.title = titel;
+                        document.getElementById("device").innerHTML = data.Name;
+
+                        if (window.matchMedia('(hover: hover)').matches) {
+                            inp.focus();
+                        }
+                        setCursorEnd(inp);
+
+                        if (data.EnableOwn == 0 || data.EnableOwn == 1) {
+                            document.getElementById("warning").innerHTML = " erfolgreich!";
+                            if (green == 1) document.getElementById("showbox").className = "greensign";
+                        }
+                        console.log(data);
+                        setTimeout(() => {
+                            document.getElementById("showbox").className = "invisible";
+                        }, 8000);
+                    })
+                    .catch(err => {
+                        document.getElementById("warning").innerHTML = "Daten konnten nicht geladen werden!";
+                        document.getElementById("showbox").className = "redsign";
+                        console.log("Ladefehler (ESP nicht erreichbar?):", err);
+                    });
+            }, delaytime);
+        }
+
+        function sendQuick() {
+            let textVal = document.getElementById('userInput').value;
+            let isScroll = document.getElementById('scrollCheck').checked;
+
+            let toberREGEX = /[\}\{\\\\"]/;
+            if (toberREGEX.test(textVal)) {
+                document.getElementById("action").innerHTML = "";
+                document.getElementById("warning").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+                document.getElementById("showbox").className = "redsign";
+                return;
+            }
+
+            if (!isScroll) {
+                document.getElementById('Enable0').value = "1";
+                document.getElementById('Text0').value = textVal;
+                document.getElementById('Enable2').value = "0";
+                document.getElementById('Text2').value = "";
+                document.getElementById('MyPause2').value = "0";
+            } else {
+                document.getElementById('Enable0').value = "0";
+                document.getElementById('Text0').value = "";
+                document.getElementById('Enable2').value = "1";
+                document.getElementById('Text2').value = textVal;
+                const displayVal = document.getElementById('speedSlider').value;
+                document.getElementById('MySpeed2').value = 11 - parseInt(displayVal, 10);
+                document.getElementById('MyPause2').value = "0";
+            }
+
+            document.getElementById('formu').submit();
+            document.getElementById("showbox").className = "invisible";
+            document.getElementById("action").innerHTML = "Update";
+            loadCurrentData(1, 200);
+        }
+    </SCRIPT>
+
+</head>
+
+<body>
+
+    <div>
+
+        <div class="aussen">
+            <h1 id="device">
+                <nobr>&nbsp;</nobr>
+            </h1>
+
+            <h2>Simple Control</h2><br>
+            <p>
+            <div style="width:22em;">
+                <FORM id="formu" METHOD="POST" action="/postFormAdv" target="hiddenFrame">
+
+                   <div style="display:flex; align-items:center; gap:0.5em; margin-bottom:0.4em;">
+					<div style="flex:1; position:relative;">
+						<textarea id="userInput" class="eingabe" 
+						style="width:100%; font-size:110%; box-sizing:border-box; resize:none; overflow:hidden; height:1.8em; min-height:1.8em; 
+								line-height:1.2; font-family:inherit; display:block; white-space:break-spaces; padding-left:0.5em; padding-right:1em;"
+						oninput="autoResizeInput()" maxlength="490"></textarea>
+						<input type="button" class="knopf clearX"
+						style="position:absolute; right:0.5em; top:0.4em; font-size:70%; padding:0 0.3em;"
+						onclick="clearChar()" value="X">
+					</div>
+
+                    <div style="text-align:center; color:#af601a; font-weight:bold; font-size:75%; min-width:3.2em;">
+						<label class="switchProSimple"
+                                style="transform: scale(0.75); transform-origin: center; margin:0; display:inline-block;">
+							<input type="checkbox" class="hiddenBox" id="scrollCheck">
+							<span class="slider"></span>
+                         </label>
+						<div style="margin-top:-0.3em;">Scroll</div>
+                    </div>
+                   </div>
+
+                    <div id="speedContainer"
+                        style="display:none; text-align:center; margin-top:0.4em; margin-bottom:0.6em;">
+                        <div style="display:inline-flex; align-items:center; gap:0.6em;">
+                            <input type="range" id="speedSlider" min="1" max="10" value="5"
+                                oninput="updateSpeedVal(this.value)" class="speedRange">
+                            <span id="speedValDisplay"
+                                style="color:#af601a; font-weight:bold; font-size:95%; min-width:1em;">5</span>
+                        </div>
+                    </div>
+
+                    <!-- Tastatur Buttons -->
+                    <div style="margin-top: 0.8em; margin-bottom: 0.8em;" onmousedown="event.preventDefault()">
+                        <!-- Zahlen -->
+                        <div class="kbdRow">
+                            <button type="button" class="keybtn" onclick="addChar('1')">1</button>
+                            <button type="button" class="keybtn" onclick="addChar('2')">2</button>
+                            <button type="button" class="keybtn" onclick="addChar('3')">3</button>
+                            <button type="button" class="keybtn" onclick="addChar('4')">4</button>
+                            <button type="button" class="keybtn" onclick="addChar('5')">5</button>
+                            <button type="button" class="keybtn" onclick="addChar('6')">6</button>
+                            <button type="button" class="keybtn" onclick="addChar('7')">7</button>
+                            <button type="button" class="keybtn" onclick="addChar('8')">8</button>
+                            <button type="button" class="keybtn" onclick="addChar('9')">9</button>
+                            <button type="button" class="keybtn" onclick="addChar('0')">0</button>
+                        </div>
+                        <!-- Reihe 1 -->
+                        <div class="kbdRow">
+                            <button type="button" class="keybtn letterKey" data-char="Q"
+                                onclick="addLetter(this)">Q</button>
+                            <button type="button" class="keybtn letterKey" data-char="W"
+                                onclick="addLetter(this)">W</button>
+                            <button type="button" class="keybtn letterKey" data-char="E"
+                                onclick="addLetter(this)">E</button>
+                            <button type="button" class="keybtn letterKey" data-char="R"
+                                onclick="addLetter(this)">R</button>
+                            <button type="button" class="keybtn letterKey" data-char="T"
+                                onclick="addLetter(this)">T</button>
+                            <button type="button" class="keybtn letterKey" data-char="Z"
+                                onclick="addLetter(this)">Z</button>
+                            <button type="button" class="keybtn letterKey" data-char="U"
+                                onclick="addLetter(this)">U</button>
+                            <button type="button" class="keybtn letterKey" data-char="I"
+                                onclick="addLetter(this)">I</button>
+                            <button type="button" class="keybtn letterKey" data-char="O"
+                                onclick="addLetter(this)">O</button>
+                            <button type="button" class="keybtn letterKey" data-char="P"
+                                onclick="addLetter(this)">P</button>
+                            <button type="button" class="keybtn letterKey" data-char="Ü"
+                                onclick="addLetter(this)">Ü</button>
+                        </div>
+                        <!-- Reihe 2 -->
+                        <div class="kbdRow">
+                            <button type="button" class="keybtn letterKey" data-char="A"
+                                onclick="addLetter(this)">A</button>
+                            <button type="button" class="keybtn letterKey" data-char="S"
+                                onclick="addLetter(this)">S</button>
+                            <button type="button" class="keybtn letterKey" data-char="D"
+                                onclick="addLetter(this)">D</button>
+                            <button type="button" class="keybtn letterKey" data-char="F"
+                                onclick="addLetter(this)">F</button>
+                            <button type="button" class="keybtn letterKey" data-char="G"
+                                onclick="addLetter(this)">G</button>
+                            <button type="button" class="keybtn letterKey" data-char="H"
+                                onclick="addLetter(this)">H</button>
+                            <button type="button" class="keybtn letterKey" data-char="J"
+                                onclick="addLetter(this)">J</button>
+                            <button type="button" class="keybtn letterKey" data-char="K"
+                                onclick="addLetter(this)">K</button>
+                            <button type="button" class="keybtn letterKey" data-char="L"
+                                onclick="addLetter(this)">L</button>
+                            <button type="button" class="keybtn letterKey" data-char="Ö"
+                                onclick="addLetter(this)">Ö</button>
+                            <button type="button" class="keybtn letterKey" data-char="Ä"
+                                onclick="addLetter(this)">Ä</button>
+                        </div>
+                        <!-- Reihe 3 & Satzzeichen -->
+                        <div class="kbdRow">
+                            <button type="button" class="keybtn letterKey" data-char="Y"
+                                onclick="addLetter(this)">Y</button>
+                            <button type="button" class="keybtn letterKey" data-char="X"
+                                onclick="addLetter(this)">X</button>
+                            <button type="button" class="keybtn letterKey" data-char="C"
+                                onclick="addLetter(this)">C</button>
+                            <button type="button" class="keybtn letterKey" data-char="V"
+                                onclick="addLetter(this)">V</button>
+                            <button type="button" class="keybtn letterKey" data-char="B"
+                                onclick="addLetter(this)">B</button>
+                            <button type="button" class="keybtn letterKey" data-char="N"
+                                onclick="addLetter(this)">N</button>
+                            <button type="button" class="keybtn letterKey" data-char="M"
+                                onclick="addLetter(this)">M</button>
+                            <button type="button" class="keybtn shiftKey" data-lower="," data-upper=";"
+                                onclick="addShiftChar(this)">,</button>
+                            <button type="button" class="keybtn shiftKey" data-lower="." data-upper=":"
+                                onclick="addShiftChar(this)">.</button>
+                            <button type="button" class="keybtn shiftKey" data-lower="!" data-upper="?"
+                                onclick="addShiftChar(this)">!</button>
+                            <button type="button" class="keybtn shiftKey" data-lower="-" data-upper="_"
+                                onclick="addShiftChar(this)">-</button>
+                        </div>
+                        <!-- Leerzeichen & Steuerbuttons -->
+                        <div class="kbdRow">
+                            <button type="button" id="shiftBtn" class="keybtn keybtn-wide" onclick="toggleShift()"
+                                style="background-color: white; color: #af601a;">⇧ Shift</button>
+                            <button type="button" class="keybtn keybtn-space"
+                                onclick="addChar(' ')">Leerzeichen</button>
+                            <button type="button" class="keybtn keybtn-wide" onmousedown="startBackspace(event)"
+                                onmouseup="stopBackspace()" onmouseleave="stopBackspace()"
+                                ontouchstart="startBackspace(event)" ontouchend="stopBackspace()"
+                                ontouchcancel="stopBackspace()">⌫</button>
+                            <button type="button" class="keybtn keybtn-wide" onclick="clearChar()">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- --- SLOT 0 (Statisch) --- -->
+                    <input type="hidden" id="Enable0" name="MyEnable0" value="0">
+                    <input type="hidden" id="Text0" name="MyText0" value="">
+                    <input type="hidden" name="MyIn0" value="0">
+                    <input type="hidden" name="MyOut0" value="0">
+                    <input type="hidden" name="MyAlign0" value="0">
+                    <input type="hidden" name="MySpeed0" value="5">
+                    <input type="hidden" name="MyPause0" value="0">
+
+                    <!-- --- SLOT 1 (explizit aus) --- -->
+                    <input type="hidden" name="MyEnable1" value="0"><input type="hidden" name="MyText1" value=""><input
+                        type="hidden" name="MyIn1" value="0"><input type="hidden" name="MyOut1" value="0"><input
+                        type="hidden" name="MyAlign1" value="0"><input type="hidden" name="MySpeed1" value="5"><input
+                        type="hidden" name="MyPause1" value="0">
+
+                    <!-- --- SLOT 2 (Scroll) --- -->
+                    <input type="hidden" id="Enable2" name="MyEnable2" value="0">
+                    <input type="hidden" id="Text2" name="MyText2" value="">
+                    <input type="hidden" name="MyIn2" value="3">
+                    <input type="hidden" name="MyOut2" value="3">
+                    <input type="hidden" name="MyAlign2" value="0">
+                    <input type="hidden" id="MySpeed2" name="MySpeed2" value="5">
+                    <input type="hidden" id="MyPause2" name="MyPause2" value="0">
+
+                    <!-- --- SLOT 3 und 4(explizit aus) --- -->
+                    <input type="hidden" name="MyEnable3" value="0"><input type="hidden" name="MyText3" value=""><input
+                        type="hidden" name="MyIn3" value="0"><input type="hidden" name="MyOut3" value="0"><input
+                        type="hidden" name="MyAlign3" value="0"><input type="hidden" name="MySpeed3" value="5"><input
+                        type="hidden" name="MyPause3" value="0">
+                    <input type="hidden" name="MyEnable4" value="0"><input type="hidden" name="MyText4" value=""><input
+                        type="hidden" name="MyIn4" value="0"><input type="hidden" name="MyOut4" value="0"><input
+                        type="hidden" name="MyAlign4" value="0"><input type="hidden" name="MySpeed4" value="5"><input
+                        type="hidden" name="MyPause4" value="0">
+
+                    <!-- --- Alle System-Features explizit aus --- -->
+                    <input type="hidden" name="MyEnableTime" value="0">
+                    <input type="hidden" name="MyEnableDate" value="0">
+                    <input type="hidden" name="MyEnableWeath" value="0">
+                    <input type="hidden" name="MyEnableNews1" value="0">
+                    <input type="hidden" name="MyEnableNews2" value="0">
+                    <input type="hidden" name="MyEnableSpot" value="0">
+                    <input type="hidden" name="MyEnableOwn" value="0">
+
+                    <!-- --- Grafiken explizit aus --- -->
+                    <input type="hidden" name="MyEnableGraph_0" value="0">
+                    <input type="hidden" name="MyEnableGraph_1" value="0">
+                    <input type="hidden" name="MyEnableGraph_2" value="0">
+                    <input type="hidden" name="MyEnableGraph_3" value="0">
+                    <input type="hidden" name="MyEnableGraph_4" value="0">
+                    <input type="hidden" name="MyEnableGraph_5" value="0">
+
+                    <input type="hidden" name="custServ" value="">
+                    <input type="hidden" name="Mys" value="">
+
+                    <input type="button" class="knopf" onclick="sendQuick()" value="Senden"><br>
+
+                    <div style="height: 1.8em; margin-top: 1.2em; margin-bottom: 0.2em;">
+                        <div id="showbox" class="invisible"><span id="action"></span><span id="warning"></span></div>
+                    </div>
+                </FORM>
+            </div>
+
+            <div style="margin-top: 2.0em;">
+                <div class="promenu"><a class="prolink" href="index.html">Message</a></div>
+                <div class="promenu"><a class="prolink" href="news.html">News</a></div>
+                <div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+                <div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+            </div>
+
+            <div>
+                <div class="promenu small" style="margin-top: 0.5em;">Nur mit Login:</div>
+                <div class="promenu small" style="margin-top: 0.5em;"><a class="prolink" href="admin.html">Admin</a>
+                </div>
+                <div class="promenu small" style="margin-top: 0.5em;"><a class="prolink" href="config.html">Config</a>
+                </div>
+                <div class="promenu small" style="margin-top: 0.5em;"><a class="prolink" href="spiffs.html">Spiffs</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+</body>
+
+</html>

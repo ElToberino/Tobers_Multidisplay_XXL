@@ -1,0 +1,88 @@
+﻿<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Spotify Info</title>
+	<SCRIPT>
+
+		window.addEventListener('load', () => {
+
+			once(10);
+		})
+
+		function once(delay) {
+			setTimeout(function () {
+				fetch('/cover')
+					.then(response => {
+						return response.json()
+					})
+					.then(data => {
+						document.getElementById("source").innerHTML = data.Source;
+						document.getElementById("Songinfo").innerHTML = data.Info;
+						document.getElementById("Cover").src = data.Url;
+
+						var titel = "Spotify Info - " + data.Name;
+						document.title = titel;
+						document.getElementById("device").innerHTML = data.Name;
+
+						console.log(data)
+					})
+					.catch(err => {
+						// Do something for an error here
+						document.getElementById("Songinfo").innerHTML = "FEHLER: Daten konnten nicht geladen werden!";
+					})
+			}, delay);
+		}
+
+
+
+	</SCRIPT>
+
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="device">
+				<nobr>&nbsp;</nobr>
+			</h1>
+
+			<h2 id="source">Es läuft gerade</h2><br>
+
+			<p>
+			<div>
+				<img id="Cover" src="" style="max-width:90%; max-height:30%;">
+			</div>
+			<div class="spotify"><span id="Songinfo" style="text-align:left;">0</span></div>
+
+			<br>
+			<div style="text-align:center; color:white;">
+				<a href="index.html" style="outline:none;"><span class="knopflink">Message</span></a>
+				<a href="news.html" style="outline:none;"><span class="knopflink">News</span></a>
+				<a href="weather.html" style="outline:none;"><span class="knopflink">Wetter</span></a>
+			</div>
+
+			<div>
+				<div class="promenu small">Nur mit Login:</div>
+				<div class="promenu small"><a class="prolink" href="admin.html">Admin</a></div>
+				<div class="promenu small"><a class="prolink" href="config.html">Config</a></div>
+				<div class="promenu small"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+		</div>
+	</div>
+
+</body>
+
+</html>

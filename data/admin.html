@@ -1,0 +1,1127 @@
+<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!-- YOU CAN MODIFY THE SITE BY JUST SETTING THE DESIRED SLOT TO INVISIBLE BY ADDING "display:none;" to the HTML.
+	EXAMPLE: Slot NEWS_1 becomes invisible by changing the HTML to: 
+							<div id="news1_Slot" class="proformadv" style="display:none; text-align:left; color:...........
+	
+	You also have to change "function aus" according to the comment found there.
+	
+	BEFORE DISABLING SLOTS SWITCH THEM OFF, UPDATE DISPLAY AND SAVE THE CHANGES !
+ -->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<STYLE>
+		#my0_Slot>div,
+		#my2_Slot>div,
+		#my3_Slot>div,
+		#my4_Slot>div {
+			vertical-align: top;
+		}
+
+		/*
+			# selects an element by its unique ID. 
+			> means "direct child element". `#my0_Slot > div` tells the browser: "Select all `<div>` containers located directly on the first level underneath `#my0_Slot`." 
+			The comma acts as a group selector (OR operator). It allows you to apply the same CSS rule to multiple elements simultaneously without having to duplicate code.
+		*/
+
+		.clearX {
+			position: absolute;
+			right: 0.5em;
+			top: 0.65em;
+			font-size: 95%;
+			padding: 0em 0.2em;
+			background: none !important;
+			background-color: transparent !important;
+			border: none;
+			cursor: pointer;
+			color: red;
+			font-weight: bold;
+			line-height: 1;
+			z-index: 10;
+		}
+
+		@media (hover: hover) {
+			.clearX:hover {
+				color: darkred !important;
+			}
+		}
+
+		.clearX:active {
+			color: darkred;
+		}
+	</STYLE>
+	<title>Message-Verwaltung</title>
+	<SCRIPT>
+
+		window.addEventListener('load', () => {
+			buildform();
+			requestCurrent(0, 10);
+			autoGrowInputFields();
+		})
+
+		var isMSGon = true;
+
+
+
+		function buildform() {
+			var myobject = {
+
+				0: "Print",
+				1: "Scroll Up",
+				2: "Scroll Down",
+				3: "Scroll Left",
+				4: "Scroll Right",
+				5: "Slice",
+				6: "Mesh",
+				7: "Fade",
+				8: "Dissolve",
+				9: "Blinds",
+				10: "Wipe",
+				11: "Wipe Cursor",
+				12: "Scan Horiz",
+				13: "Scan Horiz X",
+				14: "Scan Vert",
+				15: "Scan Vert X",
+				16: "Opening",
+				17: "Opening Cursor",
+				18: "Closing",
+				19: "Closing Cursor",
+				20: "Scroll Up Left",
+				21: "Scroll Up Right",
+				22: "Scroll Down Left",
+				23: "Scroll Down Right",
+				24: "Grow Up",
+				25: "Grow Down",
+				26: "No Effect",
+				27: "Random Effect",
+				28: "S Walker",
+				29: "S Invader",
+				30: "S Chevron",
+				31: "S Heart",
+				32: "S Arrow 1",
+				33: "S Steamboat",
+				34: "S FBall",
+				35: "S Rocket",
+				36: "S Roll 2",
+				37: "S Pacman 2",
+				38: "S Lines",
+				39: "S Roll 1",
+				40: "S Sailboat",
+				41: "S Arrow 2",
+				42: "S Wave 1",
+				43: "S Pacman 1",
+				99: "SHUFFLE"
+			};
+
+			var ali = {
+				0: "Links",
+				1: "Mittig",
+				2: "Rechts"
+			};
+
+			var speedi = {
+				10: "1",
+				9: "2",
+				8: "3",
+				7: "4",
+				6: "5",
+				5: "6",
+				4: "7",
+				3: "8",
+				2: "9",
+				1: "10"
+			};
+
+			var pausi = {
+				0: "0",
+				2: "1",
+				4: "2",
+				6: "3",
+				8: "4",
+				10: "5",
+				12: "6",
+				14: "7",
+				16: "8",
+				18: "9",
+				20: "10",
+				22: "11",
+				24: "12",
+				26: "13",
+				28: "14",
+				30: "15",
+				32: "16",
+				34: "17",
+				36: "18",
+				38: "19",
+				40: "20",
+				60: "30",
+				80: "40",
+				100: "50",
+				120: "60"
+			};
+
+			for (var t = 0; t < 5; t++) {                                             //fills form with select options
+
+				var select = document.getElementById("EffIn" + t);
+				for (var index in myobject) {
+					select.options[select.options.length] = new Option(myobject[index], index);
+				}
+
+				var select1 = document.getElementById("EffOut" + t);
+				for (var index in myobject) {
+					select1.options[select1.options.length] = new Option(myobject[index], index);
+				}
+
+				var select2 = document.getElementById("Align" + t);
+				for (var index in ali) {
+					select2.options[select2.options.length] = new Option(ali[index], index);
+				}
+
+				var select3 = document.getElementById("Speed" + t);
+				for (var index in speedi) {
+					select3.options[select3.options.length] = new Option(speedi[11 - index], 11 - index);
+				}
+
+				var select4 = document.getElementById("Pause" + t);
+				for (var index in pausi) {
+					select4.options[select4.options.length] = new Option(pausi[index], index);
+				}
+			}
+
+			var animations = {
+				1: "Heartbeat",
+				2: "Spectrum bold",
+				3: "Rotating Arrows",
+				4: "Hearts",
+				5: "Arrow Scroller",
+				6: "Eyes",
+				7: "Sinewave",
+				8: "Pacman",
+				9: "Midline Scan",
+				10: "Scan Simple",
+				11: "Random",
+				12: "Scroller Scan",
+				13: "Spectrum narrow",
+				14: "Wiper",
+				15: "SHUFFLE",
+			};
+
+			for (var t = 0; t < 6; t++) {                                             //fills form with select options
+				var select = document.getElementById("anim" + t);
+				for (var index in animations) {
+					select.options[select.options.length] = new Option(animations[index], index);
+				}
+			}
+		}
+
+		var isOn = false;																	// wird true wenn mindestens ein enable Wert = 1 oder höher
+		var graphTypes = [6];																// Zwischenspeicher Arrays für Enable-Werte 
+		var musicType;																		// -> damit bei Null/disabled die Auswahl/Option weiter angezeigt wird	
+
+
+		function enableInfo(dataIn, name) {
+
+			if (dataIn["Enable" + name] == 0) {
+				document.getElementById("check" + name).checked = "";
+			}
+			else {
+				document.getElementById("check" + name).checked = "checked";
+				isOn = true;
+			}
+			document.getElementById("check" + name).value = dataIn["Enable" + name];
+
+			var spotcheck = dataIn["Enable" + name];
+			if (name == "Spot" && spotcheck != 0) document.getElementById("music").value = dataIn["Enable" + name];   // wenn enableSpot nicht 0, wird Wert vom Server bezogen
+			else if (name == "Spot") document.getElementById("music").value = musicType;							// ansonsten aus dem Zwischenspeicher-Array
+
+			for (var m = 0; m < 6; m++) {
+				var check = dataIn["Enable" + name];
+				if (name == "Graph_" + m && check != 0) document.getElementById("anim" + m).value = dataIn["Enable" + name];
+				else if (name == "Graph_" + m) document.getElementById("anim" + m).value = graphTypes[m];
+			}
+			return true;
+		}
+
+
+		function requestCurrent(green, delaytime) {                                           //calls all data from server
+			isOn = false;
+			setTimeout(function () {
+				fetch('/showAdvanced')
+					.then(response => {
+						return response.json()
+					})
+					.then(data => {
+
+
+						for (var t = 0; t < 5; t++) {
+
+
+							if (data["Enable" + t] == 0) {                                             //sets checkboxes according to received values
+								document.getElementById("check" + t).checked = "";
+								document.getElementById("Text" + t).className = "innerproform";
+							}
+							else {
+								document.getElementById("check" + t).checked = "checked";
+								document.getElementById("Text" + t).className = "innerproforminput";
+								isOn = true;
+							}
+
+							document.getElementById("Enable" + t).value = data["Enable" + t];             // fills received data into form
+							document.getElementById("EffIn" + t).value = data["In" + t];
+							document.getElementById("Text" + t).value = data["Text" + t];
+							document.getElementById("EffOut" + t).value = data["Out" + t];
+							document.getElementById("Align" + t).value = data["Align" + t];
+							document.getElementById("Speed" + t).value = data["Speed" + t];
+							document.getElementById("Pause" + t).value = data["Pause" + t];
+
+						}
+
+						if (data.Enable1 == 1) document.getElementById("customService").className = "innerproforminput";
+						else document.getElementById("customService").className = "innerproform";
+
+						enableInfo(data, "Time");
+						//enableInfo(data, "Date");
+						enableInfo(data, "Weath");
+						enableInfo(data, "News1");
+						enableInfo(data, "Spot");
+						enableInfo(data, "News2");
+						enableInfo(data, "Own");
+
+						if (data["EnableTimeXXL"] == 1) {
+							document.getElementById("date_Slot").style.display = "none";
+							document.getElementById("timeLabel").innerHTML = "Uhrzeit und Datum";
+						} else {
+							document.getElementById("date_Slot").style.display = "";
+							document.getElementById("timeLabel").innerHTML = "Zeit";
+							enableInfo(data, "Date");
+						}
+
+						var titel = "Message-Verwaltung - " + data.Name;
+						document.title = titel;
+						document.getElementById("device").innerHTML = data.Name;
+
+						document.getElementById("customService").value = data.custServ;
+
+						if (data["EnableServiceMSG"] == 0) {
+							isMSGon = false;
+							document.getElementById("customService").style.display = "none";
+							document.getElementById("cus").style = "";
+							document.getElementById("cus_switch").style = "";
+							document.getElementById("cusSpan").innerHTML = "Message";
+						}
+
+
+						for (var m = 0; m < 6; m++) {
+							enableInfo(data, "Graph_" + m);
+							var gcheck = data["EnableGraph_" + m];
+							if (gcheck != 0) graphTypes[m] = gcheck;
+						}
+						var mcheck = data["EnableSpot"];
+						if (mcheck != 0) musicType = mcheck;
+
+						if (isOn == true) document.getElementById("Off").checked = "checked"; else document.getElementById("Off").checked = "";  	// setzt den Schalter für "alle aus"
+
+						populatePresets(data.Preset);
+
+						if (data.EnableOwn == 0 || data.EnableOwn == 1) {
+							document.getElementById("success").innerHTML = " erfolgreich!";      //shows message if loading data was successful	
+							if (green == 1) document.getElementById("showbox").className = "greensignpro";
+						}
+						console.log(data)
+						setTimeout(() => {
+							document.getElementById("showbox").className = "invisible";
+						}, 8000);
+					})
+					.catch(err => {
+						document.getElementById("success").innerHTML = "Daten konnten nicht geladen werden!";
+						document.getElementById("showbox").className = "redsignpro";
+					})
+			}, delaytime);
+		}
+
+
+
+		function trick() {                                               //validates input and calls submit function
+			toberREGEX = /[\}\{\\\"]/;
+			var falseflag;
+			for (var t = 0; t < 5; t++) {
+				var check = document.getElementById("Text" + t).value;
+				var result = toberREGEX.test(check);
+				if (result == true) falseflag = true;
+			}
+			if (isMSGon == true) {
+				var check = document.getElementById("customService").value;
+				var result = toberREGEX.test(check);
+				if (result == true) falseflag = true;
+			}
+			if (falseflag == true) {
+				document.getElementById("action").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+				document.getElementById("success").innerHTML = "";
+				document.getElementById("showbox").className = "redsignpro";
+			} else {
+				SendeFunction();
+			}
+		}
+
+		function transform(place) { 							//transforms "checked" attributes to values in hidden input:
+			if (document.getElementById("check" + place).checked == true) {
+				if (place == "Spot") {
+					var Api = document.getElementById("music").value;
+					document.getElementById("Enable" + place).value = Api;
+				}
+				else if (place == "Graph_0") {
+					var g1 = document.getElementById("anim0").value;
+					document.getElementById("Enable" + place).value = g1;
+				} else {
+					document.getElementById("Enable" + place).value = 1;
+				}
+			} else {
+				document.getElementById("Enable" + place).value = 0;
+			}
+		}
+
+		function transform_Graph() { 							//transforms "checked" attributes to values in hidden input:
+			for (var m = 0; m < 6; m++) {
+				if (document.getElementById("checkGraph_" + m).checked == true) {
+					var g1 = document.getElementById("anim" + m).value;
+					document.getElementById("EnableGraph_" + m).value = g1;
+				} else {
+					document.getElementById("EnableGraph_" + m).value = 0;
+				}
+			}
+		}
+
+		function sender(formName, message) {
+
+			document.getElementById(formName).submit();
+			document.getElementById("showbox").className = "invisible";
+			document.getElementById("action").innerHTML = message;
+			requestCurrent(1, 200);
+		}
+
+
+
+
+		function SendeFunction() {
+
+			transform("0");
+			transform("1");
+			transform("2");
+			transform("3");
+			transform("4");
+			transform("Time");
+			transform("Date");
+			transform("Weath");
+			transform("News1");
+			transform("Spot");
+			transform("News2");
+			transform("Own");
+			transform_Graph();
+
+			sender("formu", "Update");
+		}
+
+		
+		function FunctionSave() {
+			var sav = document.getElementById("PresSave");
+			if (sav.value == 99 || sav.value == 199) {
+				document.getElementById("action").innerHTML = "Preset default kann nicht überschrieben werden";
+				document.getElementById("success").innerHTML = "";
+				document.getElementById("showbox").className = "redsignpro";
+			} else {
+				var check = confirm("Soll Preset "+ sav.value + " wirklich überschrieben werden?");
+				if (check == true) {
+					var formData = new FormData(document.getElementById("currentSaver"));
+					fetch('/saveAll', {
+						method: 'POST',
+						body: formData
+					})
+						.then(response => {
+							if (response.ok) { 																// if HTTP-Status 200 (OK)
+								document.getElementById("action").innerHTML = "Speichern";
+								document.getElementById("success").innerHTML = " erfolgreich!";
+								document.getElementById("showbox").className = "greensignpro";
+							} else {
+								document.getElementById("action").innerHTML = "Fehler beim Speichern!";		// error response (e.g. HTTP 500)
+								document.getElementById("success").innerHTML = "";
+								document.getElementById("showbox").className = "redsignpro";
+							}
+						})
+						.catch(error => {																	// no response (no Wifi, ESP crash etc)
+							document.getElementById("action").innerHTML = "Netzwerkfehler beim Speichern!";
+							document.getElementById("success").innerHTML = "";
+							document.getElementById("showbox").className = "redsignpro";
+						});
+				}
+			}
+		}
+
+
+
+
+		function disable_input(i) {           //changes style of text input fields on toggle switch action
+			var Check = "check" + i;
+			var Text = "Text" + i;
+
+			if (document.getElementById(Check).checked == true) {
+				document.getElementById(Text).className = "innerproforminput";
+				if (i == 1) document.getElementById("customService").className = "innerproforminput";
+			}
+
+			if (document.getElementById(Check).checked == false) {
+				document.getElementById(Text).className = "innerproform";
+				if (i == 1) document.getElementById("customService").className = "innerproform";
+			}
+		}
+
+		// CHANGE THIS FUNCTION IF YOU HAVE MADE SLOTS INVISIBLE
+		function aus() {														// Switching all slots off/on
+			if (document.getElementById("Off").checked == true) {
+				//document.querySelectorAll("input[type='checkbox']:not(#checkDate):not(#checkNews2)").forEach((element) => {					//https://peshmerge.io/how-to-check-uncheck-all-checkboxes-on-a-web-page-using-vanilla-javascript/
+				document.querySelectorAll("input[type='checkbox']").forEach((element) => {												// CHANGE TO EXCLUDE INVISBLE SLOTS	
+					element.checked = "checked";
+				});
+				for (var m = 0; m < 6; m++) {
+					document.getElementById("anim" + m).value = graphTypes[m];																	// holt Werte aus dem Zwischenspeicher-Array
+				}
+				document.getElementById("music").value = musicType;
+			} else {
+				//document.querySelectorAll("input[type='checkbox']:not(#checkDate):not(#checkNews2)").forEach((element) => {					//https://stackoverflow.com/questions/50800404/exclude-specific-element-by-id-on-queryselectorall/50800607
+				document.querySelectorAll("input[type='checkbox']").forEach((element) => {												// CHANGE TO EXCLUDE INVISBLE SLOTS	
+					element.checked = "";
+				});
+				for (var m = 0; m < 6; m++) {
+					document.getElementById("anim" + m).value = graphTypes[m];
+				}
+				document.getElementById("music").value = musicType;
+			}
+			for (var t = 0; t < 5; t++) disable_input(t);
+		}
+
+		function tempSave(id) {																// schreibt Werte bei Änderungen in Zwischenspeicher-Array
+			if (id == "music") musicType = document.getElementById(id).value;
+			else graphTypes[id] = document.getElementById("anim" + id).value;
+		}
+
+		function autoGrowInputFields() {													// handles and adjusts height if inout fields
+			setTimeout(() => {
+				const ids = ['Text0', 'Text1', 'Text2', 'Text3', 'Text4'];
+				ids.forEach(id => {
+					const input = document.getElementById(id);
+					if (input && input.tagName.toLowerCase() === 'input') {
+						const ta = document.createElement('textarea');
+						ta.id = input.id;
+						ta.name = input.name;
+						ta.className = input.className;
+						ta.maxLength = input.maxLength;
+						if (input.size) ta.cols = input.size;
+						ta.rows = 1;
+
+						// Calculate original INPUT styles
+						const comp = window.getComputedStyle(input);
+
+						let clientH = parseFloat(comp.height) || 0;
+						let boxSizing = comp.boxSizing;
+						let borderTop = parseFloat(comp.borderTopWidth) || 0;
+						let borderBottom = parseFloat(comp.borderBottomWidth) || 0;
+						let padTopOrig = parseFloat(comp.paddingTop) || 0;
+						let padBotOrig = parseFloat(comp.paddingBottom) || 0;
+
+						let totalInnerH = 0; 								// Height inside border
+						if (boxSizing === 'border-box') {
+							totalInnerH = clientH - borderTop - borderBottom;
+						} else {
+							totalInnerH = clientH + padTopOrig + padBotOrig;
+						}
+
+						// Calculate fallback height if the element was hidden and returns 0
+						if (totalInnerH <= 0) {
+							totalInnerH = parseFloat(comp.fontSize) * 1.6;
+						}
+
+						// Calculate new padding values to vertically center the text precisely
+						let lh = parseFloat(comp.lineHeight);
+						if (isNaN(lh)) {
+							lh = parseFloat(comp.fontSize) * 1.2;
+						}
+
+						const pad = Math.max(0, (totalInnerH - lh) / 2);
+						const origHeight = (totalInnerH + borderTop + borderBottom) + 'px';
+
+						// Style adjustments for an identical design
+						ta.style.resize = 'none';
+						ta.style.overflow = 'hidden';
+						ta.style.fontFamily = comp.fontFamily;
+						ta.style.fontSize = comp.fontSize;
+						ta.style.boxSizing = 'border-box'; 		// forced border-box for textarea
+
+						ta.style.lineHeight = lh + 'px';
+						ta.style.paddingTop = pad + 'px';
+						ta.style.paddingBottom = pad + 'px';
+						ta.style.paddingLeft = comp.paddingLeft;
+						ta.style.paddingRight = comp.paddingRight;
+
+						ta.style.verticalAlign = comp.verticalAlign;
+						ta.style.whiteSpace = 'break-spaces';
+
+						ta.style.minHeight = origHeight;
+						ta.style.height = origHeight;
+
+						// Take the exact width in pixels from the original
+						ta.style.width = comp.width;
+
+						if (input.style.width) {
+							ta.style.width = input.style.width;
+						}
+
+						ta.style.paddingRight = '1.2em';
+
+						const adjustHeight = () => {
+							ta.style.height = origHeight;
+							const sHeight = ta.scrollHeight;
+							if (sHeight > totalInnerH) {
+								ta.style.height = (sHeight + borderTop + borderBottom) + 'px';
+							}
+						};
+
+						ta.addEventListener('input', adjustHeight);
+
+						const wrapper = document.createElement('div');
+						wrapper.style.position = 'relative';
+						wrapper.style.display = 'inline-block';
+						wrapper.style.verticalAlign = comp.verticalAlign;
+
+						const btnX = document.createElement('input');
+						btnX.type = 'button';
+						btnX.className = 'clearX';
+						btnX.value = 'X';
+						btnX.onclick = function () {
+							ta.value = '';
+							adjustHeight();
+						};
+
+						input.parentNode.replaceChild(wrapper, input);
+						wrapper.appendChild(ta);
+						wrapper.appendChild(btnX);
+
+						ta.addEventListener('keydown', function (e) {
+							if (e.key === 'Enter') e.preventDefault();
+						});
+
+						// Intercept value assignments from requestCurrent
+						const desc = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+						Object.defineProperty(ta, 'value', {
+							get: function () { return desc.get.call(this); },
+							set: function (val) {
+								desc.set.call(this, val);
+								setTimeout(adjustHeight, 10);
+							}
+						});
+
+						ta.value = input.value;
+					}
+				});
+			}, 300);
+		}
+
+
+		function populatePresets(preset) {
+			var select = document.getElementById("select_preset");
+			select.length = 0;  // clear
+			if (preset >= 100) {
+				select.options[select.options.length] = new Option('Preset_AP', '100');
+				select.options[select.options.length] = new Option('default_AP', '199');
+			} else {
+				for (var i = 0; i < 5; i++) {
+					select.options[select.options.length] = new Option('Preset ' + i, i);
+				}
+				select.options[select.options.length] = new Option('default', '99');
+			}
+			select.value = preset;
+			setPresets();  // immediate synchronisation of hidden fields 
+		}
+
+
+		function setPresets() {
+			var newPres = document.getElementById("select_preset").value;
+			document.getElementById("PresLoad").value = newPres;
+			document.getElementById("PresSave").value = newPres;
+		}
+
+
+
+
+
+	</SCRIPT>
+
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="device">
+				<nobr>&nbsp;</nobr>
+			</h1>
+
+			<h2>Messageverwaltung</h2><br>
+
+			<p>
+
+			<FORM id="formu" METHOD="POST" action="/postFormAdv" target="hiddenFrame"
+				style="text-align:left; width:100%;">
+
+				<!-- TIME -->
+				<div id="time_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkTime" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableTime" type="hidden" name="MyEnableTime" value=""></input>
+					</div>
+					<div id="timeLabel" class="msgDef">Uhrzeit und Datum</div>
+				</div>
+
+				<!-- DATE -->
+				<div id="date_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkDate" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableDate" type="hidden" name="MyEnableDate" value=""></input>
+					</div>
+					<div class="msgDef">Datum</div>
+				</div>
+
+				<!-- MSG_0 -->
+				<div id="my0_Slot" class="proformadv">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProAdvanced">
+							<input type="checkbox" class="hiddenBox" id="check0" checked=""
+								onchange="disable_input(0);">
+							<span class="slider"></span>
+						</label>
+						<input id="Enable0" type="hidden" name="MyEnable0" value=""></input>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Effin0">Eingang</label><br>
+						<select id="EffIn0" type="text" name="MyIn0" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Text0">Message</label><br>
+						<input id="Text0" type="text" name="MyText0" value="" size="28" pattern="[^\{\}\x22\\]+"
+							maxlength="490" class="innerproforminput">
+					</div>
+					<div style="display: inline-block;">
+						<label for="EffOut0">Ausgang</label><br>
+						<select id="EffOut0" type="text" name="MyOut0" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Align0">Ausrichtung</label><br>
+						<select id="Align0" type="text" name="MyAlign0" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Speed0">Speed</label><br>
+						<select id="Speed0" type="text" name="MySpeed0" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Pause0">Pause</label><br>
+						<select id="Pause0" type="text" name="MyPause0" value="" class="innerproform"></select>
+					</div>
+				</div>
+
+				<!-- GRAPH_0 -->
+				<div id="graph0_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_0" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_0" type="hidden" name="MyEnableGraph_0" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim0" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(0);"></select>
+					</div>
+				</div>
+
+				<!-- NEWS_1 -->
+				<div id="news1_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkNews1" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableNews1" type="hidden" name="MyEnableNews1" value=""></input>
+					</div>
+					<div class="msgDef">News</div>
+				</div>
+
+				<!-- MSG_1 -->
+				<div id="my1_Slot" class="proformadv">
+					<div style="display: inline-block; float:left;">
+						<label id="cus_switch" class="switchProAdvanced" style="margin-top:2em;">
+							<input type="checkbox" class="hiddenBox" id="check1" checked=""
+								onchange="disable_input(1);">
+							<span class="slider"></span>
+						</label>
+						<input id="Enable1" type="hidden" name="MyEnable1" value=""></input>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Effin1">Eingang</label><br>
+						<select id="EffIn1" type="text" name="MyIn1" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label id="cus" for="Text1"
+							style="display: inline-block; width: 100%; text-align: right; color:white; font-weight:bold;"><span
+								id="cusSpan">Service&nbsp;</span><input id="customService" name="custServ" type="text"
+								maxlength="29" class="innerproforminput" style="width:11em;"></input>
+						</label><br>
+						<input id="Text1" type="text" name="MyText1" value="" size="28" pattern="[^\{\}\x22\\]+"
+							maxlength="490" class="innerproforminput">
+					</div>
+					<div style="display: inline-block;">
+						<label for="EffOut1">Ausgang</label><br>
+						<select id="EffOut1" type="text" name="MyOut1" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Align1">Ausrichtung</label><br>
+						<select id="Align1" type="text" name="MyAlign1" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Speed1">Speed</label><br>
+						<select id="Speed1" type="text" name="MySpeed1" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Pause1">Pause</label><br>
+						<select id="Pause1" type="text" name="MyPause1" value="" class="innerproform"></select>
+					</div>
+				</div>
+
+				<!-- GRAPH_1 -->
+				<div id="graph1_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_1" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_1" type="hidden" name="MyEnableGraph_1" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim1" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(1);"></select>
+					</div>
+				</div>
+
+				<!-- SPOTIFY -->
+				<div id="spot_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkSpot" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableSpot" type="hidden" name="MyEnableSpot" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Musikinfo
+						<select id="music" type="text" name="" value="" class="innerproform"
+							style="margin-left:2.1em; width:9.7em;" onchange="tempSave(this.id);">
+							<option value="1">Spotify</option>
+							<option value="2">Google Cast</option>
+							<option value="3">Info extern</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- GRAPH_2 -->
+				<div id="graph2_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_2" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_2" type="hidden" name="MyEnableGraph_2" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim2" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(2);"></select>
+					</div>
+				</div>
+
+				<!-- MSG_2 -->
+				<div id="my2_Slot" class="proformadv">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProAdvanced">
+							<input type="checkbox" class="hiddenBox" id="check2" checked=""
+								onchange="disable_input(2);">
+							<span class="slider"></span>
+						</label>
+						<input id="Enable2" type="hidden" name="MyEnable2" value=""></input>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Effin2">Eingang</label><br>
+						<select id="EffIn2" type="text" name="MyIn2" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Text2">Message</label><br>
+						<input id="Text2" type="text" name="MyText2" value="" size="28" pattern="[^\{\}\x22\\]+"
+							maxlength="490" class="innerproforminput">
+					</div>
+					<div style="display: inline-block;">
+						<label for="EffOut2">Ausgang</label><br>
+						<select id="EffOut2" type="text" name="MyOut2" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Align2">Ausrichtung</label><br>
+						<select id="Align2" type="text" name="MyAlign2" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Speed2">Speed</label><br>
+						<select id="Speed2" type="text" name="MySpeed2" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Pause2">Pause</label><br>
+						<select id="Pause2" type="text" name="MyPause2" value="" class="innerproform"></select>
+					</div>
+				</div>
+
+				<!-- MSG_3 -->
+				<div id="my3_Slot" class="proformadv">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProAdvanced">
+							<input type="checkbox" class="hiddenBox" id="check3" checked=""
+								onchange="disable_input(3);">
+							<span class="slider"></span>
+						</label>
+						<input id="Enable3" type="hidden" name="MyEnable3" value=""></input>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Effin3">Eingang</label><br>
+						<select id="EffIn3" type="text" name="MyIn3" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Text3">Message</label><br>
+						<input id="Text3" type="text" name="MyText3" value="" size="28" pattern="[^\{\}\x22\\]+"
+							maxlength="490" class="innerproforminput">
+					</div>
+					<div style="display: inline-block;">
+						<label for="EffOut3">Ausgang</label><br>
+						<select id="EffOut3" type="text" name="MyOut3" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Align3">Ausrichtung</label><br>
+						<select id="Align3" type="text" name="MyAlign3" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Speed3">Speed</label><br>
+						<select id="Speed3" type="text" name="MySpeed3" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Pause3">Pause</label><br>
+						<select id="Pause3" type="text" name="MyPause3" value="" class="innerproform"></select>
+					</div>
+				</div>
+
+				<!-- GRAPH_3 -->
+				<div id="graph3_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_3" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_3" type="hidden" name="MyEnableGraph_3" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim3" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(3);"></select>
+					</div>
+				</div>
+
+				<!-- MSG_4 -->
+				<div id="my4_Slot" class="proformadv">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProAdvanced">
+							<input type="checkbox" class="hiddenBox" id="check4" checked=""
+								onchange="disable_input(4);">
+							<span class="slider"></span>
+						</label>
+						<input id="Enable4" type="hidden" name="MyEnable4" value=""></input>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Effin4">Eingang</label><br>
+						<select id="EffIn4" type="text" name="MyIn4" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Text4">Message</label><br>
+						<input id="Text4" type="text" name="MyText4" value="" size="28" pattern="[^\{\}\x22\\]+"
+							maxlength="490" class="innerproforminput">
+					</div>
+					<div style="display: inline-block;">
+						<label for="EffOut4">Ausgang</label><br>
+						<select id="EffOut4" type="text" name="MyOut4" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Align4">Ausrichtung</label><br>
+						<select id="Align4" type="text" name="MyAlign4" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Speed4">Speed</label><br>
+						<select id="Speed4" type="text" name="MySpeed4" value="" class="innerproform"></select>
+					</div>
+					<div style="display: inline-block;">
+						<label for="Pause4">Pause</label><br>
+						<select id="Pause4" type="text" name="MyPause4" value="" class="innerproform"></select>
+					</div>
+				</div>
+
+				<!-- GRAPH_4 -->
+				<div id="graph4_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_4" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_4" type="hidden" name="MyEnableGraph_4" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim4" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(4);"></select>
+					</div>
+				</div>
+
+				<!-- NEWS_2 -->
+				<div id="news2_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkNews2" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableNews2" type="hidden" name="MyEnableNews2" value=""></input>
+					</div>
+					<div class="msgDef">News</div>
+				</div>
+
+				<!-- WEATHER -->
+				<div id="weath_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkWeath" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableWeath" type="hidden" name="MyEnableWeath" value=""></input>
+					</div>
+					<div class="msgDef">Wetter</div>
+				</div>
+
+				<!-- GRAPH_5 -->
+				<div id="graph5_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkGraph_5" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableGraph_5" type="hidden" name="MyEnableGraph_5" value=""></input>
+					</div>
+					<div style="display:inline-block; margin-left:0.9em; margin-bottom:0.3em;">Graphic
+						<select id="anim5" type="text" name="" value="" class="innerproform" style="margin-left:3em;"
+							onchange="tempSave(5);"></select>
+					</div>
+				</div>
+
+				<!-- OWN_MSG -->
+				<div id="own_Slot" class="proformadv"
+					style="text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="checkOwn" checked="">
+							<span class="slider"></span>
+						</label>
+						<input id="EnableOwn" type="hidden" name="MyEnableOwn" value=""></input>
+					</div>
+					<div class="msgDef">Ownmessage</div>
+				</div>
+
+				<!-- NO CHANGES FROM HERE -->
+				<div class="proformadv"
+					style="width:11em; text-align:left; color:white; font-weight:bold; padding-top:0.6em;">
+					<div style="display: inline-block; float:left;">
+						<label class="switchProSimple">
+							<input type="checkbox" class="hiddenBox" id="Off" checked="" onclick="aus()">
+							<span class="slider"></span>
+						</label>
+						<input id="Mys" type="hidden" name="Mys" value=""></input>
+					</div>
+					<div class="msgDef" style="color:#af601a;">alles aus</div>
+				</div>
+
+				<div>
+					<div style="display:inline-block;">
+						<input type="button" onclick="trick()" value="Update Messages" class="proknopf">
+					</div>
+					<div id="showbox" class="invisible" style="display:inline-block;"><span id="action"></span><span
+							id="success"></span></div>
+				</div>
+			</form>
+
+			<div>
+				<div style="display:inline-block; margin-left:0.5em; margin-right:0.5em; margin-bottom:2em;">
+					<FORM id="savedLoader" METHOD="POST" action="/loadAll" target="hiddenFrame">
+						<input type="button" onclick="sender('savedLoader','Laden')" value="Load Saved"
+							class="proknopf">
+						<input id="PresLoad" type="hidden" name="PresetLoad" value=""></input>
+					</form>
+				</div>
+				<div style="display:inline-block; margin-left:0.5em; margin-right:0.5em;">
+					<select id="select_preset" type="text" name="Preset" value="" class="innerproform"
+						style="margin:0; padding:0.3em;" onchange="setPresets();"></select>
+				</div>
+				<div style="display:inline-block; margin-left:0.5em; margin-right:0.5em; margin-top:1.5em;">
+					<FORM id="currentSaver" METHOD="POST" action="/saveAll" target="hiddenFrame">
+						<input type="button" onclick="FunctionSave()" value="Save Current" class="proknopf">
+						<input id="PresSave" type="hidden" name="PresetSave" value=""></input>
+					</form>
+				</div>
+			</div>
+
+
+			<div>
+				<div class="promenu">Admin</div>
+				<div class="promenu"><a class="prolink" href="config.html">Config</a></div>
+				<div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+				<div class="promenu"><a class="prolink" href="news.html">News</a></div>
+				<div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+				<div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+				<div class="promenu"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+			<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+		</div>
+	</div>
+
+</body>
+
+</html>

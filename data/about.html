@@ -1,0 +1,99 @@
+﻿<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Daniel</title>
+	<STYLE>
+
+	</STYLE>
+	<SCRIPT>
+		window.addEventListener('load', () => {
+			once();
+		})
+
+		
+		function once() {
+		 setTimeout(function() {
+          fetch('/sketchName')
+			  .then(response => {
+				return response.json()
+				})
+              .then(data => {
+				// Sucht nach dem letzten Unterstrich und nimmt alles danach (außer Unterstriche) bis .ino
+				const match = data.Name.match(/_([^_]+)\.ino$/);
+				var version = match ? match[1] : null;
+				document.getElementById("currentVersion").innerHTML = version;
+				
+				var titel = data.DeviceName + " - Informationen";
+			    document.title = titel;
+				document.getElementById("device").innerHTML = data.DeviceName;
+				
+				document.getElementById("jahr_aktuell").textContent = new Date().getFullYear();
+				
+				console.log(data)
+				})
+			  .catch(err => {
+						document.getElementById("showbox").style.background = "red";
+						document.getElementById("showbox").style.color = "white";
+						document.getElementById("showbox").style.padding = "0.1em";
+						document.getElementById("showbox").innerHTML = "Daten konnten nicht geladen werden!";
+				})
+		 }, 50);
+		}
+
+
+	</SCRIPT>
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="device">
+				<nobr>&nbsp;</nobr>
+			</h1>
+
+			<h2>Informationen</h2><br>
+			<div id="showbox"></div>
+			<div class="proform" id="currentBox"
+				style="max-width:32em; padding:1em; text-align:left; font-size:100%; font-weight:normal; color:#af601a; line-height:1.5;">
+				<b>Tobers Multidisplay XXL - V <span id="currentVersion"></span></b><br>
+				<span style="padding-left:0.2em;">von elToberino</span><br>
+				<br> 
+				<span style="font-size:85%;">
+				Alle Informationen und Credits sind zu finden auf<br>
+				<a class="prolink" href="https://github.com/ElToberino/Tobers_Multidisplay_XXL">https://github.com/ElToberino/Tobers_Multidisplay_XXL</a>
+				</span><br>
+				<br>
+				<span style="font-size:80%;">&copy; 2020-<span id="jahr_aktuell"></span> Tobias Schulz<br>
+				veröffentlicht unter GNU General Public License v3.0.
+				</span>
+			</div>
+
+
+			<div>
+				<div class="promenu"><a class="prolink" href="admin.html">Admin</a></div>
+				<div class="promenu"><a class="prolink" href="config.html">Config</a></div>
+				<div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+				<div class="promenu"><a class="prolink" href="news.html">News</a></div>
+				<div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+				<div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+				<div class="promenu"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+		</div>
+	</div>
+
+</body>
+
+</html>

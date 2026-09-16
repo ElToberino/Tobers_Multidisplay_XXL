@@ -1,0 +1,883 @@
+﻿<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>API-Verwaltung</title>
+	<STYLE>
+		.configsuccess {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding-top: 0.2em;
+			padding-bottom: 0.3em;
+			padding-left: 1em;
+			padding-right: 0.4em;
+			font-size: 80%;
+			background-color: #f6b54d;
+			text-align: left;
+			color: #af601a;
+			border: 0.2em solid green;
+		}
+
+		.configfault {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding-top: 0.2em;
+			padding-bottom: 0.3em;
+			padding-left: 1em;
+			padding-right: 0.4em;
+			font-size: 80%;
+			background-color: #f6b54d;
+			text-align: left;
+			color: #af601a;
+			border: 0.2em solid red;
+		}
+
+		.configknopf {
+			width: 10em;
+			margin: 2em 0 0 0;
+		}
+
+		.apis {
+			text-align: center;
+			margin-top: 1em;
+			margin-bottom: 0.8em;
+		}
+
+		.source {
+			margin-top: 0.5em;
+		}
+
+
+		.bez {
+			width: 4.3em;
+			margin-right: 0.5em;
+			display: inline-block;
+		}
+
+
+		.innerproform {
+			width: 70%;
+		}
+
+		.config {
+			margin-top: 1em;
+			margin-bottom: 1em;
+			padding-top: 0.4em;
+			padding-bottom: 0.4em;
+			padding-left: 1em;
+			padding-right: 1em;
+			font-size: 80%;
+			/*background-color:#f6b54d;*/
+			text-align: left;
+			color: #af601a;
+			box-shadow: 0.2em 0.1em 0.2em #d58910;
+		}
+
+		.showconf {
+			padding: 0.5em 0.2em 0.5em 0.5em;
+			color: #af601a;
+			font-weight: normal;
+		}
+
+
+
+		.stamp {
+			display: table-cell;
+			font-size: 90%;
+			font-weight: bold;
+			background-color: white;
+			padding: 1em;
+			vertical-align: middle;
+			text-align: center;
+		}
+
+		.apiurl {
+			display: table-cell;
+			/*background-color:yellow;*/
+			padding: 0.5em;
+			width: 25em;
+		}
+
+		.status {
+			font-size: 90%;
+			font-style: italic;
+			margin-left: 3em;
+		}
+
+		.sourceCell {
+			border-bottom: 1px solid #af601a;
+			margin-bottom: 0.3em;
+			padding-bottom: 0.3em;
+			width: 95%;
+		}
+
+		.music {
+			width: 80%;
+			padding: 0.3em 0.3em 0.3em 0.5em;
+			display: table-cell;
+			text-align: left;
+			vertical-align: middle;
+		}
+
+		.date {
+			display: table-cell;
+			text-align: left;
+			font-size: 90%;
+			font-weight: bold;
+			width: 3em;
+			padding: 0.3em 0.8em 0.3em 0.8em;
+			background-color: white;
+		}
+
+		.symbol {
+			display: table-cell;
+			text-align: left;
+			padding: 0.3em 0.3em 0.3em 0.8em;
+			width: 3em;
+			vertical-align: middle;
+		}
+
+		.configgreen {
+			margin-left: 0;
+		}
+
+		.configred {
+			margin-left: 0;
+		}
+
+
+		.promenu {
+			float: left;
+		}
+
+		.apiname {
+			margin-left: 4.5em;
+			margin-top: 0.5em;
+			font-size: 110%;
+			font-weight: bold;
+			color: green;
+		}
+	</STYLE>
+	<SCRIPT>
+		var maxSize;
+		var LogArray;
+		var numofLogs;// = 3;
+		var numberofcities;// = 2;
+		var newssources;// = 4;
+		var weatherslots;//= 4;
+		var numofMusicLogs; //= 10;
+		var numofTimeLogs; //= 3;
+		var apiType;
+		var apiTypeW;
+
+
+
+		window.addEventListener('load', () => {
+			//dom();
+			once(true);
+		})
+
+		function dom() {
+
+			// MUSIC LOG
+			var buf = '<div style="text-align:center; font-size:100%; font-weight:bold;">Music-Api-Log</div>';
+			for (var i = 0; i < numofMusicLogs; i++) {
+				buf += '<div id="slot' + i + '" class="sourceCell" style="display:none;"><div id="dat' + i + '" class="date">-</div><div id="symb' + i + '" class="symbol">-</div><div id="mus' + i + '" class="music">-</div></div>';
+			}
+			buf += '<div id="remaining" style="text-align:left; padding-top:0.5em; padding-left:0.5em;"></div>'
+			document.querySelector('#logBoxMusic').insertAdjacentHTML('afterbegin', buf);
+
+			//TIMELOG
+			var buf = '<div style="text-align:center; font-size:100%; font-weight:bold;">Time Server-Log</div>';
+			for (var i = 0; i < numofTimeLogs; i++) {
+				// CHANGE THIS LINE: Close div after symb_time, before mus_time
+				buf += '<div id="slot_time' + i + '" class="sourceCell" style="display:none;"><div id="dat_time' + i + '" class="date">-</div><div id="symb_time' + i + '" class="symbol">-</div><div id="mus_time' + i + '" class="music">-</div></div>';
+			}
+			document.querySelector('#logBoxTime').insertAdjacentHTML('afterbegin', buf);
+
+			// NEWS LOG
+			var buf2 = '<div style="text-align:center; font-size:100%; font-weight:bold;">News-Api-Log</div>';
+			for (var i = 0; i < numofLogs; i++) {
+				buf2 += '<div id="header' + i + '" class="sourceCell" style="display:none;"></div>';
+				buf2 += '<div class="stamp" id="newsStamp' + i + '" style="display:none;"></div> <div class="apiurl" id="apiurl' + i + '" style="display:none;">';
+				for (var j = 0; j < newssources; j++) {
+					buf2 += '<div id="newsSource' + ((i * newssources) + j) + '" class="sourceCell">www.spiegel.de<br><span class="status">&nbsp; html:200 &nbsp; &nbsp; parse:99</span></div>';
+				}
+				if (i == (numofLogs - 1)) buf2 += '</div> <div class="source" style="text-align:right; cursor:pointer;"  onclick="hideLog(\'logBoxNews\')">Hide Log&nbsp;</div>';
+				else buf2 += '</div> <div class="source" style="text-align:right; cursor:pointer;"  onclick="hideLog(\'logBoxNews\')">&nbsp;</div>';
+			}
+			document.querySelector('#logBoxNews').insertAdjacentHTML('afterbegin', buf2);
+
+			// WEATHER LOG
+			var buf3 = '<div style="text-align:center; font-size:100%; font-weight:bold;">Weather-Api-Log</div>';
+			for (var i = 0; i < numofLogs; i++) {
+				buf3 += '<div id="headerW' + i + '" class="sourceCell" style="display:none;"></div>';
+				buf3 += '<div class="stamp" id="weathStamp' + i + '" style="display:none;"></div> <div class="apiurl" id="apiurlw' + i + '" style="display:none;">';
+				for (var j = 0; j < weatherslots; j++) {
+					buf3 += '<div id="weathSource' + ((i * weatherslots) + j) + '" class="sourceCell">www.spiegel.de<br><span class="status">&nbsp; html:200 &nbsp; &nbsp; parse:99</span></div>';
+				}
+				if (i == (numofLogs - 1)) buf3 += '</div> <div class="source" style="text-align:right; cursor:pointer;"  onclick="hideLog(\'logBoxWeath\')">Hide Log &nbsp;</div>';
+				else buf3 += '</div> <div class="source" style="text-align:right; cursor:pointer;"  onclick="hideLog(\'logBoxWeath\')">&nbsp;</div>';
+			}
+			document.querySelector('#logBoxWeath').insertAdjacentHTML('afterbegin', buf3);
+
+
+			const regi = "[^\\{\\}\\x22\\\\]+"; 			// entspricht [^\{\}\x22\\]+ da double escape nötig
+			const coordPattern = "-?\\d+(\\.\\d+)?";                   // for coordinates: -12.345
+			// API KEY WEATHER
+			var aps = '<div id="apiW_1" class="apiname" style="margin-top:1em;" onclick="toggleKeys(\'W_Keys_1\')">openweathermap.org <span class="indicator"></span></div>';
+			aps += '<div id="W_Keys_1">';
+			for (var k = 0; k < Number(numberofcities); k++) {
+				aps += '<div class="source">';
+				aps += '<div class="bez" >City ' + (k + 1) + ':</div><input id="cit_A' + k + '" style="margin-right:1em;" class="innerproform" type="text" name="City_A' + k + '" maxlength="50" value="">';
+				aps += '</div><div class="source" style="margin-bottom:1em;">';
+				aps += '<div class="bez" style="width:2em; margin-left:5em; margin-right:0.1em;">Lat</div><input id="lat_A' + k + '" class="innerproform" style="width:5em; margin-right:1em;" type="text" name="Lat_A' + k + '" maxlength="20" value="">';
+				aps += '<div class="bez" style="width:2em;  margin-right:0.1em;">Lon</div><input id="lon_A' + k + '" class="innerproform" style="width:5em;margin-right:1em;" type="text" name="Lon_A' + k + '" maxlength="20" value="">';
+				aps += '</div>';
+			}
+			aps += '</div>';
+			aps += '<div id="apiW_2" class="apiname" style="margin-top:1.5em;" onclick="toggleKeys(\'W_Keys_2\')">open-meteo.com <span class="indicator"></span></div>';
+			aps += '<div id="W_Keys_2">';
+			for (var k = 0; k < Number(numberofcities); k++) {
+				aps += '<div class="source">';
+				aps += '<div class="bez" >City ' + (k + 1) + ':</div><input id="cit_B' + k + '" style="margin-right:1em;" class="innerproform" type="text" name="City_B' + k + '" maxlength="50" value="">';
+				aps += '</div><div class="source" style="margin-bottom:1em;">';
+				aps += '<div class="bez" style="width:2em; margin-left:5em; margin-right:0.1em;">Lat</div><input id="lat_B' + k + '" class="innerproform" style="width:5em; margin-right:1em;" type="text" name="Lat_B' + k + '" maxlength="20" value="">';
+				aps += '<div class="bez" style="width:2em;  margin-right:0.1em;">Lon</div><input id="lon_B' + k + '" class="innerproform" style="width:5em;margin-right:1em;" type="text" name="Lon_B' + k + '" maxlength="20" value="">';
+				aps += '</div>';
+			}
+			aps += '</div>';
+			document.querySelector('#Wetter_Api').insertAdjacentHTML('afterbegin', aps);
+			for (var i = 0; i < numberofcities; i++) {
+				document.getElementById('cit_A' + i).pattern = regi;
+				document.getElementById('lat_A' + i).pattern = coordPattern;
+				document.getElementById('lon_A' + i).pattern = coordPattern;
+				document.getElementById('cit_B' + i).pattern = regi;
+				document.getElementById('lat_B' + i).pattern = coordPattern;
+				document.getElementById('lon_B' + i).pattern = coordPattern;
+			}
+
+			// API KEY NEWS
+			var aps2 = '<div id="api_1" class="apiname" style="margin-top:1em;" onclick="toggleKeys(\'N_Keys_1\')">newsapi.org <span class="indicator"></span></div>';
+			aps2 += '<div id="N_Keys_1">';
+			for (var i = 0; i < newssources; i++) {
+				aps2 += '<div class="source"><div class="bez">Source ' + (i + 1) + ': </div><input id="n' + i + '" class="innerproform" type="text" name="Source' + i + '" maxlength="100" value=""></div>';
+			}
+			aps2 += '</div>';
+			aps2 += '<div id="api_2" class="apiname" style="margin-top:1.5em;" onclick="toggleKeys(\'N_Keys_2\')">thenewsapi.com <span class="indicator"></span></div>';
+			aps2 += '<div id="N_Keys_2">';
+			for (var k = Number(newssources); k < Number(newssources) * 2; k++) {
+				aps2 += '<div class="source"><div class="bez">Source ' + ((k + 1) - Number(newssources)) + ': </div><input id="n' + k + '" class="innerproform" type="text" name="Source' + k + '" maxlength="100" value=""></div>';
+			}
+			aps2 += '</div>';
+			document.querySelector('#News_Api').insertAdjacentHTML('afterbegin', aps2);
+			for (var i = 0; i < newssources * 2; i++) document.getElementById('n' + i).pattern = regi;
+		}
+
+
+		var android;
+
+		function once(startup, form, savedStates) {
+			fetch('/showAPI')
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					android = data;
+					var titel = "API-Verwaltung - " + data.Name;
+					document.title = titel;
+					document.getElementById("device").innerHTML = data.Name;
+					numofLogs = data.NumOfLogs;
+					numberofcities = data.NumOfCities;
+					newssources = data.NewsSources;
+					weatherslots = 2 * numberofcities;
+					numofMusicLogs = data.NumOfMusicLogs;
+					numofTimeLogs = data.NumOfTimeLogs;
+					apiType = data.NewsApiType;
+					apiTypeW = data.WeathApiType;
+					if (form) {
+						if (form != "Loader" && form != "Saver") {
+							document.getElementById(form).children[0].className = "configsuccess";
+							setTimeout(() => {
+								document.getElementById(form).children[0].className = "config";
+							}, 5000);
+						} else {
+							document.getElementById(form).children[0].style.background = "green";
+							setTimeout(() => {
+								document.getElementById(form).children[0].style.background = "";
+							}, 3000);
+						}
+					}
+					if (startup) dom(data);			// (data) -> when data finished
+					//gogo(data);
+					console.log(data)
+				})
+				.then(finishedData => {
+					gogo(savedStates); // <--- Starts after the previous .then() finishes
+				})
+				.catch(err => {
+					document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display";
+					document.getElementById("showbox").className = "configred";
+				})
+		}
+
+		function gogo(savedStates) {
+			for (var t = 0; t < newssources * 2; t++) {
+
+				document.getElementById("n" + t).value = android["Source" + t];
+			}
+			// open-meteo cities + lat/lon
+			for (var k = 0; k < Number(numberofcities); k++) {
+				document.getElementById("cit_A" + k).value = android["City_A" + k] || "";
+				document.getElementById("lat_A" + k).value = android["Lat_A" + k] || "";
+				document.getElementById("lon_A" + k).value = android["Lon_A" + k] || "";
+				document.getElementById("cit_B" + k).value = android["City_B" + k] || "";
+				document.getElementById("lat_B" + k).value = android["Lat_B" + k] || "";
+				document.getElementById("lon_B" + k).value = android["Lon_B" + k] || "";
+			}
+			//for (var k=0;k<newssources;k++){
+			//var getter="Source"+k;
+			//document.getElementById("n"+(k+4)).value = android["Source"+k];
+			//}
+			if (apiType == 0) {
+				document.getElementById("api_1").style.color = "green";
+				document.getElementById("api_2").style.color = "red";
+				document.getElementById("N_Keys_1").style.display = "";
+				document.getElementById("N_Keys_2").style.display = "none";
+			}
+			if (apiType == 1) {
+				document.getElementById("api_1").style.color = "red";
+				document.getElementById("api_2").style.color = "green";
+				document.getElementById("N_Keys_1").style.display = "none";
+				document.getElementById("N_Keys_2").style.display = "";
+			}
+			if (apiType == 99) {
+				document.getElementById("api_1").style.color = "green";
+				document.getElementById("api_2").style.color = "green";
+				document.getElementById("N_Keys_1").style.display = "";
+				document.getElementById("N_Keys_2").style.display = "";
+			}
+
+			if (apiTypeW == 0) {
+				document.getElementById("apiW_1").style.color = "green";
+				document.getElementById("apiW_2").style.color = "red";
+				document.getElementById("W_Keys_1").style.display = "";
+				document.getElementById("W_Keys_2").style.display = "none";
+			}
+			if (apiTypeW == 1) {
+				document.getElementById("apiW_1").style.color = "red";
+				document.getElementById("apiW_2").style.color = "green";
+				document.getElementById("W_Keys_1").style.display = "none";
+				document.getElementById("W_Keys_2").style.display = "";
+			}
+			if (apiTypeW == 99) {
+				document.getElementById("apiW_1").style.color = "green";
+				document.getElementById("apiW_2").style.color = "green";
+				document.getElementById("W_Keys_1").style.display = "";
+				document.getElementById("W_Keys_2").style.display = "";
+			}
+			updateIndicator("N_Keys_1");
+			updateIndicator("N_Keys_2");
+			updateIndicator("W_Keys_1");
+			updateIndicator("W_Keys_2");
+
+			// Restore toggle states if saved
+			if (savedStates) {
+				var keys = ["W_Keys_1", "W_Keys_2", "N_Keys_1", "N_Keys_2"];
+				for (var i = 0; i < keys.length; i++) {
+					if (savedStates[keys[i]] !== undefined) {
+						document.getElementById(keys[i]).style.display = savedStates[keys[i]];
+					}
+				}
+				updateIndicator("N_Keys_1");
+				updateIndicator("N_Keys_2");
+				updateIndicator("W_Keys_1");
+				updateIndicator("W_Keys_2");
+			}
+		}
+
+
+		function validateNews(id, nums, max, form, info) {
+			var counts = 0;
+			for (var t = 0; t < nums; t++) {
+				var versuch = document.getElementById(id + t).value;
+				var toberREGEX = /[\}\{\\\"]/;                                 //siehe Simulator auf https://www.regextester.com/97777
+				if (versuch.length <= Number(max)) {
+					var result = toberREGEX.test(versuch);
+					if (result == true) {
+						document.getElementById("showbox").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("newsForm").children[0].className = "configfault";
+					}
+					else {
+						counts++;
+					}
+				} else {
+					document.getElementById("showbox").innerHTML = "Es sind maximal " + max + " Zeichen erlaubt!";
+					document.getElementById("showbox").className = "configred";
+					document.getElementById("newsForm").children[0].className = "configfault";
+				}
+
+			}
+			if (counts == nums)
+				//document.getElementById("showbox").innerHTML = "paletti";
+				//document.getElementById("showbox").className = "configred";}
+				SendeFunction(form, info);
+		}
+
+		function validateWeather() {
+			var counts = 0;
+			var totalFields = 0;
+			var toberREGEX = /[\}\{\\\"]/;
+			var coordRegex = /^-?\d+(\.\d+)?$/;
+			var prefixes = ["_A", "_B"];  // both API providers
+			for (var p = 0; p < prefixes.length; p++) {
+				var prefix = prefixes[p];
+				for (var k = 0; k < Number(numberofcities); k++) {
+					// City name
+					totalFields++;
+					var cityVal = document.getElementById("cit" + prefix + k).value;
+					if (cityVal.length > 50) {
+						document.getElementById("showbox").innerHTML = "City: Maximal 50 Zeichen erlaubt!";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					if (toberREGEX.test(cityVal)) {
+						document.getElementById("showbox").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					counts++;
+					// Latitude
+					totalFields++;
+					var latVal = document.getElementById("lat" + prefix + k).value;
+					if (latVal.length > 20) {
+						document.getElementById("showbox").innerHTML = "Lat: Maximal 20 Zeichen erlaubt!";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					if (latVal !== "" && !coordRegex.test(latVal)) {
+						document.getElementById("showbox").innerHTML = "Lat muss eine Zahl sein!";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					counts++;
+					// Longitude
+					totalFields++;
+					var lonVal = document.getElementById("lon" + prefix + k).value;
+					if (lonVal.length > 20) {
+						document.getElementById("showbox").innerHTML = "Lon: Maximal 20 Zeichen erlaubt!";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					if (lonVal !== "" && !coordRegex.test(lonVal)) {
+						document.getElementById("showbox").innerHTML = "Lon muss eine Zahl sein!";
+						document.getElementById("showbox").className = "configred";
+						document.getElementById("weatherForm").children[0].className = "configfault";
+						return;
+					}
+					counts++;
+				}
+			}
+			if (counts == totalFields) {
+				SendeFunction('weatherForm', 'Wetter API-Parameter gesetzt!');
+			}
+		}
+
+
+
+		function SendeFunction(form, info) {
+			// Save current toggle states before refresh
+			var savedStates = {};
+			var keys = ["W_Keys_1", "W_Keys_2", "N_Keys_1", "N_Keys_2"];
+			for (var i = 0; i < keys.length; i++) {
+				var el = document.getElementById(keys[i]);
+				if (el) savedStates[keys[i]] = el.style.display;
+			}
+
+			document.getElementById(form).submit();
+			setTimeout(() => {
+				once(false, form, savedStates);
+			}, 500);
+			document.getElementById("showbox").innerHTML = info;
+			document.getElementById("showbox").className = "configgreen";
+			setTimeout(() => {
+				document.getElementById("showbox").className = "configinvisible";
+			}, 8000);
+		}
+
+
+
+		function showLogNews() {
+			fetch('/showLogNews')
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					//var timestamps;// = [data["Stamp0"], data["Stamp1"], data["Stamp2"]];
+					var timestamps = [];
+					for (var k = 0; k < numofLogs; k++) {
+						timestamps.push(data["Stamp" + k]);
+					}
+					timestamps.sort();
+					timestamps.reverse();
+					console.log(timestamps);
+					for (var i = 0; i < numofLogs; i++) {
+						var ruschel = data["Stamp" + i];
+						var pos = timestamps.indexOf(ruschel);
+						var type = data["Type" + i];
+						if (type == "0") document.getElementById("header" + pos).innerHTML = "newsapi.org";
+						if (type == "1") document.getElementById("header" + pos).innerHTML = "thenewsapi.com";
+						console.log(pos);
+						console.log("PAUSE");
+						if (data["Stamp" + i] != "") {
+							document.getElementById("newsStamp" + pos).innerHTML = data["Stamp" + i];
+							document.getElementById("apiurl" + pos).style.display = "";
+							document.getElementById("newsStamp" + pos).style.display = "";
+							document.getElementById("header" + pos).style.display = "";
+							//if (data["Html"+tipi] == "200" &&  data["Parse"+tipi]== "1") symbol0 = "&#9989;"; else symbol0 = "&#10060;";
+							//var source = symbol0 + "<span style='margin-left:1em;'>" + data["Sources"+tipi] + "</span><br><span class='status'> html: " + data["Html"+tipi] + "&nbsp;&nbsp;parse: " + data["Parse"+tipi] +"</span>";
+							//document.getElementById("newsSource"+pos).innerHTML = source;
+							for (var t = 0; t < newssources; t++) {
+								var symbol0;
+								var tipi = (i * newssources) + t;
+								var wigwam = (pos * newssources) + t;
+								if (data["Html" + tipi] == "200" && data["Parse" + tipi] == "1") symbol0 = "&#9989;"; else symbol0 = "&#10060;";
+								var source = symbol0 + "<span style='margin-left:1em;'>" + data["Sources" + tipi] + "</span><br><span class='status'> html: " + data["Html" + tipi] + "&nbsp;&nbsp;parse: " + data["Parse" + tipi] + "</span>";
+								document.getElementById("newsSource" + wigwam).innerHTML = source;
+
+								console.log(pos);
+							}
+
+						}
+					}
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display";
+					document.getElementById("showbox").className = "configred";
+				})
+			document.getElementById("logBoxNews").style.display = "";
+			document.getElementById("n_switch").onclick = function () { hideLog('logBoxNews') };
+			document.getElementById("n_switch").innerHTML = "Hide Log";
+		}
+
+		function showLogWeath() {
+			fetch('/showLogWeath')
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					// = [data["Stamp0"], data["Stamp1"], data["Stamp2"]];
+					var timestamps = [];
+					for (var k = 0; k < numofLogs; k++) {
+						timestamps.push(data["Stamp" + k]);
+					}
+					timestamps.sort();
+					timestamps.reverse();
+					console.log(timestamps);
+					for (var i = 0; i < numofLogs; i++) {
+						var ruschel = data["Stamp" + i];
+						var pos = timestamps.indexOf(ruschel);
+						var type = data["Type" + i];
+						if (type == "0") document.getElementById("headerW" + pos).innerHTML = "openweathermap.org";
+						if (type == "1") document.getElementById("headerW" + pos).innerHTML = "open-meteo.com";
+
+						console.log(pos);
+						console.log("PAUSE");
+						if (data["Stamp" + i] != "") {
+							document.getElementById("weathStamp" + pos).innerHTML = data["Stamp" + i];
+							document.getElementById("apiurlw" + pos).style.display = "";
+							document.getElementById("weathStamp" + pos).style.display = "";
+							document.getElementById("headerW" + pos).style.display = "";  // ← ADD THIS LINE!
+							//if (data["Html"+tipi] == "200" &&  data["Parse"+tipi]== "1") symbol0 = "&#9989;"; else symbol0 = "&#10060;";
+							//var source = symbol0 + "<span style='margin-left:1em;'>" + data["Sources"+tipi] + "</span><br><span class='status'> html: " + data["Html"+tipi] + "&nbsp;&nbsp;parse: " + data["Parse"+tipi] +"</span>";
+							//document.getElementById("weathSource"+pos).innerHTML = source;
+							for (var t = 0; t < weatherslots; t++) {
+								var symbol0;
+								var tipi = (i * weatherslots) + t;
+								var wigwam = (pos * weatherslots) + t;
+								if (data["Html" + tipi] == "200" && data["Parse" + tipi] == "1") symbol0 = "&#9989;"; else symbol0 = "&#10060;";
+								var source = symbol0 + "<span style='margin-left:1em;'>" + data["Sources" + tipi] + "</span><br><span class='status'> html: " + data["Html" + tipi] + "&nbsp;&nbsp;parse: " + data["Parse" + tipi] + "</span>";
+								document.getElementById("weathSource" + wigwam).innerHTML = source;
+
+								console.log(pos);
+							}
+
+						}
+					}
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display";
+					document.getElementById("showbox").className = "configred";
+				})
+			document.getElementById("logBoxWeath").style.display = "";
+			document.getElementById("w_switch").onclick = function () { hideLog('logBoxWeath') };
+			document.getElementById("w_switch").innerHTML = "Hide Log";
+		}
+
+		function showLogMusic() {
+			fetch('/showLogMusic')
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					LogArray = data.LOGS;
+
+					var symbol;
+					var logtime;
+
+					LogArray.sort();											//see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+					LogArray.reverse();
+					for (var i = 0; i < LogArray.length; i++) {
+						if (LogArray[i] != "") {
+							logtime = LogArray[i].substr(0, 22);
+							symbol = LogArray[i].substring(LogArray[i].length - 8);																		//and  https://stackoverflow.com/questions/10841868/move-n-characters-from-front-of-string-to-the-end
+							LogArray[i] = LogArray[i].substring(0, LogArray[i].length - 8);
+							LogArray[i] = LogArray[i].substring(22);
+							document.getElementById("slot" + i).style.display = "";
+						} else {
+							document.getElementById("slot" + i).style.display = "none";
+							symbol = "";
+						}
+						document.getElementById("mus" + i).innerHTML = LogArray[i];
+						document.getElementById("symb" + i).innerHTML = symbol;
+						document.getElementById("dat" + i).innerHTML = logtime;
+					}
+					
+					var remDays = parseInt(data.Remaining, 10); // Als Zahl einlesen
+					var element = document.getElementById("remaining");
+
+					if (remDays < 0) {
+					element.style.color = "red";
+					element.style.fontWeight = "bold"; 
+					element.innerHTML = "Achtung! Spotify Refreshtoken ist seit " + Math.abs(remDays) + " Tagen abgelaufen!";
+					} else {
+					element.innerHTML = "Spotify Refreshtoken noch gültig für " + remDays + " Tage.";
+					}
+
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display";
+					document.getElementById("showbox").className = "configred";
+				})
+			document.getElementById("logBoxMusic").style.display = "";
+			document.getElementById("m_switch").onclick = function () { hideLog('logBoxMusic') };
+			document.getElementById("m_switch").innerHTML = "Hide Log";
+		}
+
+		function showLogTime() {
+			fetch('/showLogTime')
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					LogArray = data.LOGS;
+
+					var symbol;
+					var logtime;
+
+					LogArray.sort();											//see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+					LogArray.reverse();
+					for (var i = 0; i < LogArray.length; i++) {
+						if (LogArray[i] != "") {
+							logtime = LogArray[i].substr(0, 22);
+							symbol = LogArray[i].substring(LogArray[i].length - 8);																		//and  https://stackoverflow.com/questions/10841868/move-n-characters-from-front-of-string-to-the-end
+							LogArray[i] = LogArray[i].substring(0, LogArray[i].length - 8);
+							LogArray[i] = LogArray[i].substring(22);
+							document.getElementById("slot_time" + i).style.display = "";
+						} else {
+							document.getElementById("slot_time" + i).style.display = "none";
+							symbol = "";
+						}
+						document.getElementById("mus_time" + i).innerHTML = LogArray[i];
+						document.getElementById("symb_time" + i).innerHTML = symbol;
+						document.getElementById("dat_time" + i).innerHTML = logtime;
+					}
+
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("showbox").innerHTML = "Keine Verbindung zum Display";
+					document.getElementById("showbox").className = "configred";
+				})
+			document.getElementById("logBoxTime").style.display = "";
+			document.getElementById("t_switch").onclick = function () { hideLog('logBoxTime') };
+			document.getElementById("t_switch").innerHTML = "Hide Log";
+		}
+
+
+		function hideLog(id) {
+			document.getElementById(id).style.display = "none";
+			if (id == "logBoxNews") {
+				document.getElementById("n_switch").onclick = function () { showLogNews() };
+				document.getElementById("n_switch").innerHTML = "Show Log";
+			}
+			if (id == "logBoxWeath") {
+				document.getElementById("w_switch").onclick = function () { showLogWeath() };
+				document.getElementById("w_switch").innerHTML = "Show Log";
+			}
+			if (id == "logBoxMusic") {
+				document.getElementById("m_switch").onclick = function () { showLogMusic() };
+				document.getElementById("m_switch").innerHTML = "Show Log";
+			}
+			if (id == "logBoxTime") {
+				document.getElementById("t_switch").onclick = function () { showLogTime() };
+				document.getElementById("t_switch").innerHTML = "Show Log";
+			}
+		}
+
+		// New simple toggle function:
+		function toggleKeys(id) {
+			var el = document.getElementById(id);
+			var titleEl = el.previousElementSibling;
+			if (titleEl.style.color === "green") return;  // ← don't toggle active APIs
+			var ind = titleEl.querySelector('.indicator');
+			if (el.style.display === "none") {
+				el.style.display = "";
+				ind.innerHTML = "&nbsp;&nbsp; \u2716";
+			} else {
+				el.style.display = "none";
+				ind.innerHTML = "&nbsp;&nbsp; \u25BC";
+			}
+		}
+
+		function updateIndicator(keysId) {
+			var el = document.getElementById(keysId);
+			var titleEl = el.previousElementSibling;
+			var isRed = (titleEl.style.color === "red");
+			var ind = titleEl.querySelector('.indicator');
+			if (!isRed) {
+				ind.innerHTML = "";
+				titleEl.style.cursor = "default";     // ← no pointer on green
+				return;
+			}
+			titleEl.style.cursor = "pointer";         // ← pointer on red
+			ind.innerHTML = (el.style.display === "none") ? "&nbsp;&nbsp; \u25BC" : "&nbsp;&nbsp; \u2716";
+		}
+
+
+	</SCRIPT>
+</head>
+
+<body>
+
+	<div class="aussen">
+		<h1 id="device">
+			<nobr>&nbsp;</nobr>
+		</h1>
+		<h2 style="margin-bottom:-0.8em;">API-Verwaltung</h2><br>
+		<p>
+		<div id="showbox" class="configinvisible" style="display:inline-block;"><span id="action"></span><span
+				id="success">0</span></div>
+
+		<FORM id="newsForm" METHOD="POST" action="/postAPI" target="hiddenFrame"
+			style="margin:0; padding:0; text-align:left; width:100%;">
+			<div class="config">
+				<div style="text-align:center; font-size:120%; font-weight:bold;">News-APIs</div>
+				<div id="News_Api">
+					<div class="source">
+						<div class="apis"><input type="button"
+								onclick="validateNews('n',(newssources*2), '100', 'newsForm', 'News API-Parameter gesetzt!')"
+								class="configknopf" value="Set & Refresh">
+						</div>
+					</div>
+					<div id="n_switch" class="source" style="text-align:right; cursor:pointer;" onclick="showLogNews()">
+						Show Log</div>
+				</div>
+			</div><!-- config -->
+			<div id="logBoxNews" class="showconf" style="display:none;">
+			</div>
+		</form>
+
+
+		<FORM id="weatherForm" METHOD="POST" action="/postAPI" target="hiddenFrame"
+			style="margin:0; padding:0; text-align:left; width:100%;">
+			<div class="config" style="margin-top:2em;">
+				<div style="text-align:center; font-size:120%; font-weight:bold;">Wetter-APIs</div>
+				<div id="Wetter_Api">
+					<div class="source">
+						<div class="apis"><input type="button" onclick="validateWeather()" class="configknopf"
+								value="Set & Refresh"></div>
+					</div>
+					<div id="w_switch" class="source" style="text-align:right; cursor:pointer;"
+						onclick="showLogWeath()">Show Log</div>
+				</div>
+			</div><!-- config -->
+			<div id="logBoxWeath" class="showconf" style="display:none;">
+			</div>
+		</form>
+
+		<div id="showlogMusic" class="config" style="margin-top:2em;">
+			<div style="text-align:center; font-size:120%; font-weight:bold;">Music-Api</div>
+			<div id="m_switch" class="source" style="text-align:right; cursor:pointer;" onclick="showLogMusic()">Show
+				Log</div>
+		</div><!-- config -->
+		<div id="logBoxMusic" class="showconf" style="display:none;">
+			<div class="source" style="text-align:right; cursor:pointer;" onclick="hideLog('logBoxMusic')">Hide Log
+				&nbsp;</div>
+		</div>
+
+		<div id="showlogTime" class="config" style="margin-top:2em;">
+			<div style="text-align:center; font-size:120%; font-weight:bold;">Time-Server</div>
+			<div id="t_switch" class="source" style="text-align:right; cursor:pointer;" onclick="showLogTime()">Show Log
+			</div>
+		</div><!-- config -->
+		<div id="logBoxTime" class="showconf" style="display:none;">
+			<div class="source" style="text-align:right; cursor:pointer;" onclick="hideLog('logBoxTime')">Hide Log
+				&nbsp;</div>
+		</div>
+
+
+		<div>
+			<div
+				style="display:inline-block; margin-left:0.5em; margin-right:0.5em; margin-top:0.5em; margin-bottom:1em;">
+				<FORM id="Saver" METHOD="POST" action="/saveAPI" target="hiddenFrame">
+					<input type="button" onclick="SendeFunction('Saver', 'API-Parameter gespeichert')"
+						value="Save Current" class="proknopf">
+				</form>
+			</div>
+			<div style="display:inline-block; margin-left:0.5em; margin-right:0.5em;">
+				<FORM id="Loader" METHOD="POST" action="/loadAPI" target="hiddenFrame">
+					<input type="button" onclick="SendeFunction('Loader', 'API-Parameter geladen')" value="Load Saved"
+						class="proknopf">
+				</form>
+			</div>
+		</div>
+
+
+
+		<!--<div style="margin-left:3em; margin-right:3em;"> -->
+		<div style="margin-left:3em; margin-right:3em; display:flex; flex-wrap:wrap; justify-content:center;">
+			<div class="promenu"><a class="prolink" href="admin.html">Admin</a></div>
+			<div class="promenu"><a class="prolink" href="config.html">Config</a></div>
+			<div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+			<div class="promenu"><a class="prolink" href="news.html">News</a></div>
+			<div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+			<div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+			<div class="promenu"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+		</div>
+
+
+		</p>
+	</div> <!-- außen -->
+	<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+</body>
+
+</html>

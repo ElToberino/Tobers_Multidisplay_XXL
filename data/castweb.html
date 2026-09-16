@@ -1,0 +1,373 @@
+<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Google Cast Verwaltung</title>
+	<STYLE>
+		.castForm {
+			width: 15em;
+			border: 0.1em solid #af601a;
+			padding: 0.3em;
+			margin-top: 0.2em;
+			margin-bottom: 0.2em;
+			margin-left: 0.1em;
+			margin-right: 0.1em;
+			background-color: #f39c12;
+			color: white;
+			font-weight: bold;
+		}
+
+		.wl {
+			font-size: 110%;
+			font-weight: bold;
+			padding-left: 3em;
+			cursor: pointer;
+		}
+
+		#Play,
+		#Stop,
+		#Mute {
+			height: 2.2em;
+			width: 2.2em;
+			font-size: 110%;
+			padding: 0;
+			font-weight: bold;
+			margin-right: 0.4em;
+		}
+
+		.slider1 {
+			-webkit-appearance: none;
+			margin-left: 1.5em;
+			margin-right: 1.5em;
+			width: 8em;
+			height: 0.6em;
+			background: #f39c12;
+			outline: none;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+
+		.slider1:hover {
+			opacity: 1;
+			background-color: white;
+		}
+
+		.slider1::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 0.9em;
+			height: 2em;
+			background: #af601a;
+			cursor: pointer;
+			border: none;
+		}
+
+		.slider1::-moz-range-thumb {
+			width: 0.9em;
+			height: 2em;
+			background: #af601a;
+			cursor: pointer;
+			border: none;
+		}
+	</STYLE>
+	<SCRIPT>
+
+		var host;
+		var castArray;
+		var numOfDevices;
+		var currentCastDevice;
+		var playState;
+		var muteState;
+
+		window.addEventListener('load', () => {
+
+			getCurr(1);
+		})
+
+
+
+
+
+		function goDev(i) {
+			var lager;
+			document.getElementById("Slot_" + i).style.border = "2px solid green";
+			document.getElementById("choose_" + i).style.visibility = "hidden";
+			lager = document.getElementById("ID" + i).value;
+			document.getElementById("newDevice").value = lager;
+			for (var j = 0; j < castArray.length; j++) {
+				if (j != i) {
+					document.getElementById("Slot_" + j).style.border = "";
+					document.getElementById("choose_" + j).style.visibility = "visible";
+				}
+			}
+			document.getElementById("devSender").submit();
+			setTimeout(function () {
+				getCurr(2);
+				document.getElementById("device").innerHTML = "Neues Cast Web Gerät gesetzt";
+				document.getElementById("device").style.color = "white";
+				document.getElementById("device").style.background = "green";
+			}, 200);
+		}
+
+
+
+		function dom() {
+			var buf = '<FORM id="form_IPs" METHOD="POST" action="/postIPs" target="hiddenFrame" style="margin:0; padding:0; text-align:left; width:100%; margin-bottom:3em;">';
+			for (var i = 0; i < castArray.length; i++) {
+				//buf += '<div id="Slot_' + i + '"  class="config" onclick="goDev(' + i + ')">';
+				//buf += '<input id="Name' + i + '" class="castForm" type="text" name="newName' + i + '" maxlength="21" value="" disabled><span id="choose_' + i + '" class="wl">Wählen</span><br>';
+				buf += '<div id="Slot_' + i + '"  class="config" style="">'
+
+				buf += '<input id="Name' + i + '" class="innerproform" style="width:13em; margin-left:0em; padding-left:0.5em" type="text" name="newName' + i + '" maxlength="" value="" disabled>'
+				buf += '<input type="button" id="choose_' + i + '" onclick="goDev(' + i + ')" class="configknopf" style="width:6em; margin-left:1em;" value="Wählen">'
+				buf += '<input id="ID' + i + '" class="innerproform" style="display:none;" type="text" name="newIP_' + i + '" maxlength="21" value="" disabled>';
+				buf += '</div>';
+			}
+			buf += '</form>';
+			document.querySelector('main').insertAdjacentHTML('beforeend', buf);
+			numOfDevices = castArray.length;
+		}
+
+
+
+
+		function trick() {                                               					// validates input and calls submit function
+			var toberREGEX = /\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b/;			// IP Address only -> see Simulator at https://www.regextester.com/97777
+			var falseflag;
+			if (document.getElementById("IP").value == "") document.getElementById("IP").value = "0.0.0.0";
+			var check = document.getElementById("IP").value;
+			var result = toberREGEX.test(check);
+			if (result == false) {
+				document.getElementById("device").innerHTML = "Es sind nur IP-Adressen erlaubt!";
+				document.getElementById("device").style.color = "white";
+				document.getElementById("device").style.background = "red";
+			} else {
+				document.getElementById("IPsender").submit();
+				setTimeout(function () {
+					getCurr(2);
+					document.getElementById("device").innerHTML = "Neue IP für Cast Web Api Bridge gesetzt!";
+					document.getElementById("device").style.color = "white";
+					document.getElementById("device").style.background = "green";
+				}, 200);
+			}
+		}
+
+
+
+		function getCurr(startup) {
+			var adresse = "/getDevices";
+			fetch(adresse)
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					host = data.CurrIP;
+					document.getElementById("IP").value = data.CurrIP;
+					currentCastDevice = data.CurrDevice;
+					getDevices(startup);
+
+					var titel = "Google Cast Verwaltung - " + data.Name;
+					document.title = titel;
+					document.getElementById("deviceName").innerHTML = data.Name;
+
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("device").innerHTML = "Keine Verbindung zum Display!";
+					document.getElementById("device").style.color = "white";
+					document.getElementById("device").style.background = "red";
+				})
+		}
+
+
+
+
+		function getDevices(startup) {
+			var adresse = "http://" + host + "/Device";
+			fetch(adresse)
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					castArray = data;
+					if (startup == 1) { dom(); setInterval(function () { getDevices(2); }, 5000); } 	// neu 1/21
+					if (startup == 2) {
+						if (numOfDevices != castArray.length) window.location = window.location.href; //location.reload(); 
+					}
+
+					for (var i = 0; i < castArray.length; i++) {
+						document.getElementById("ID" + i).value = castArray[i]["id"];
+						document.getElementById("Name" + i).value = castArray[i]["name"];
+						if (document.getElementById("ID" + i).value == currentCastDevice) {
+							document.getElementById("Slot_" + i).style.border = "2px solid green";
+							document.getElementById("choose_" + i).style.visibility = "hidden";
+							document.getElementById("activeDev").innerHTML = castArray[i]["name"];
+							document.getElementById("subtitle").innerHTML = castArray[i]["status"]["subtitle"];
+							document.getElementById("title").innerHTML = castArray[i]["status"]["title"];
+							document.getElementById("Cover").src = castArray[i]["status"]["image"];
+							document.getElementById("Volume").value = castArray[i]["status"]["volume"];
+							playState = castArray[i]["status"]["status"];
+							if (playState == "PLAYING") document.getElementById("Play").value = "⏸";
+							if (playState != "PLAYING") document.getElementById("Play").value = "▶";
+							muteState = castArray[i]["status"]["muted"];
+							if (muteState == false) document.getElementById("Mute").value = "🔈";
+							if (muteState == true) document.getElementById("Mute").value = "🔇";
+
+						} else {
+							document.getElementById("Slot_" + i).style.border = "";
+							document.getElementById("choose_" + i).style.visibility = "visible";
+						}
+					}
+
+					// setTimeout(function(){getDevices(2);},1000);  // neu 1/21 alternativ
+
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("device").innerHTML = "Keine Verbindung zur API!";
+					document.getElementById("device").style.color = "white";
+					document.getElementById("device").style.background = "red";
+				})
+		}
+
+
+		function updateVolume() {								//https://stackoverflow.com/questions/10004723/html5-input-type-range-show-range-value
+			var vol = document.getElementById("Volume").value;	//<input id="play" type="button" onclick="trick()" class="configknopf" value="&#9658;"><input id="stop" type="button" onclick="trick()" class="configknopf" value="&#9724;"><input type="range" min="0" max="100" value="50" class="slider1" id="Volume" onclick="updateVolume(this.value);">
+			var adresse = "http://" + host + "/device/" + currentCastDevice + "/volume/" + vol;
+			fetch(adresse)
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					//getDevices(2);
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("device").innerHTML = "Keine Verbindung zum Display!";
+					document.getElementById("device").style.color = "white";
+					document.getElementById("device").style.background = "red";
+				})
+		}
+
+		var IvID;
+
+		function mouseDown() {
+			IvID = setInterval(updateVolume, 100);
+		}
+
+		function mouseUp() {
+			clearInterval(IvID);
+			//getDevices(2);		// neu 1/21
+		}
+
+
+		function player(mode) {
+			var adresse;
+			if (mode == 0) {
+				if (playState == "PLAYING") adresse = "http://" + host + "/device/" + currentCastDevice + "/pause";
+				if (playState != "PLAYING") adresse = "http://" + host + "/device/" + currentCastDevice + "/play";
+			}
+			if (mode == 1) adresse = "http://" + host + "/device/" + currentCastDevice + "/stop";
+			if (mode == 2) {
+				if (muteState == true) adresse = "http://" + host + "/device/" + currentCastDevice + "/muted/false";
+				if (muteState == false) adresse = "http://" + host + "/device/" + currentCastDevice + "/muted/true";
+			}
+			fetch(adresse)
+				.then(response => {
+					return response.json()
+				})
+				.then(data => {
+					setTimeout(function () { getDevices(2); }, 500);
+
+					console.log(data)
+				})
+				.catch(err => {
+					document.getElementById("device").innerHTML = "Keine Verbindung zum Display!";
+					document.getElementById("device").style.color = "white";
+					document.getElementById("device").style.background = "red";
+				})
+		}
+
+
+
+
+
+	</SCRIPT>
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="deviceName">
+				<nobr>&nbsp;</nobr>
+			</h1>
+			<h2>Google Cast Verwaltung</h2>
+			<div id="device" style="font-size:90%; color:#f39c12; margin-top:0.5em; padding:0.1em;">Es erfolgreich</div>
+			<h2 style="text-align:left; margin-top:0.5em;">IP Cast Web Api</h2>
+			<FORM id="IPsender" METHOD="POST" action="/postCastConf" target="hiddenFrame"
+				style="margin:0; padding:0; text-align:left; width:100%;">
+				<div class="config">
+					<div style="display:inline-block;">
+						<input type="button" onclick="trick()" class="configknopf" value="Set API IP">
+					</div>
+					<input id="IP" class="innerproform" style="width:9em; margin-left:1em; padding-left:0.5em"
+						type="text" name="newIP" pattern="[^{}\x22\\]+" maxlength="15" value="">
+				</div>
+			</form>
+
+			<h2 style="text-align:left; margin-top:2em;">Cast Web Geräte</h2>
+			<main>
+			</main>
+			<h2 style="text-align:left; margin-top:2em;">Aktives Gerät:&nbsp;<span style="font-size:100%;"
+					id="activeDev"></span></h2>
+			<div class="config" style="text-align:left;">
+				<div style="display:table-cell; padding-top:0.2em;"><img id="Cover" src=""
+						style="max-width:7em; max-height:7em; border:1px solid black;"></div>
+				<div style="display:table-cell; vertical-align:middle; padding-left:1.2em; width:100%;"><span
+						style="font-style:italic;" id="subtitle"></span>:<br><span id="title"
+						style="font-size:105%; font-weight:bold;"></span></div>
+			</div>
+			<div class="config">
+				<div style="display:inline-block;">
+					<input id="Play" type="button" onclick="player(0)" class="configknopf" value=""><input id="Stop"
+						type="button" onclick="player(1)" class="configknopf" value="&#9724;"><input type="range"
+						min="0" max="100" value="50" class="slider1" id="Volume" onmousedown="mouseDown()"
+						onmouseup="mouseUp()" ontouchstart="mouseDown()" ontouchend="mouseUp()"><input id="Mute"
+						type="button" onclick="player(2)" class="configknopf" value="">
+
+				</div>
+
+			</div>
+
+
+
+			<div>
+				<div class="promenu"><a class="prolink" href="admin.html">Admin</a></div>
+				<div class="promenu"><a class="prolink" href="config.html">Config</a></div>
+				<div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+				<div class="promenu"><a class="prolink" href="news.html">News</a></div>
+				<div class="promenu"><a class="prolink" href="weather.html">Weather</a></div>
+				<div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+				<div class="promenu"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+		</div>
+	</div>
+	<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+	<FORM id="devSender" METHOD="POST" action="/postCastConf" target="hiddenFrame" style="display:none;">
+		<input id="newDevice" class="innerproform" style="" type="text" name="newDev" maxlength="39" value="">
+	</form>
+</body>
+
+</html>

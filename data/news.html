@@ -1,0 +1,111 @@
+﻿<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-control" content="no-cache">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Newsübersicht</title>
+  <script>
+    window.addEventListener('load', () => {
+      fetchNews();
+    });
+    function fetchNews() {
+      fetch('/showNews')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+
+          // Get configuration from server
+          const newssources = data.newssources;
+          const numofarticles = data.numofarticles;
+
+          // Set page title and device name
+          document.title = "Newsübersicht - " + data.Name;
+          document.getElementById("device").innerHTML = data.Name;
+
+          // Build and fill the news HTML
+          buildNewsHTML(data, newssources, numofarticles);
+        })
+        .catch(err => {
+          console.error('Error fetching news:', err);
+          document.getElementById("newsContainer").innerHTML =
+            '<p style="color:red;">Fehler beim Laden der News</p>';
+        });
+    }
+    function buildNewsHTML(data, newssources, numofarticles) {
+      const container = document.getElementById("newsContainer");
+      container.innerHTML = '';  // Clear loading message
+
+      let articleIndex = 0;
+
+      // Loop through each source
+      for (let s = 0; s < newssources; s++) {
+        // Create source header
+        const sourceDiv = document.createElement('div');
+        sourceDiv.className = 'newssource';
+        sourceDiv.innerHTML = data['S' + (s + 1)];
+        container.appendChild(sourceDiv);
+
+        // Create source group container
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'sourcegroup';
+
+        // Loop through articles for this source
+        for (let a = 0; a < numofarticles; a++) {
+          const li = document.createElement('li');
+          li.className = 'news';
+          if (a > 0) li.style.marginTop = '1em';
+
+          const link = document.createElement('a');
+          link.className = 'newslink';
+          link.target = '_blank';
+          link.innerHTML = data['News' + articleIndex];
+          link.href = data['NewsURL' + articleIndex];
+
+          li.appendChild(link);												// Adds <a>...</a> to <li>
+          li.appendChild(document.createElement('br'));						// Adds <br> after the link
+          groupDiv.appendChild(li);
+
+          articleIndex++;
+        }
+
+        container.appendChild(groupDiv);
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div>
+    <div class="aussen">
+      <h1 id="device">
+        <nobr>&nbsp;</nobr>
+      </h1>
+      <h2>Newsübersicht</h2><br>
+      <ul id="newsContainer" style="list-style: square inside; width:100%; margin:0; padding:0">
+        <li class="news">... loading news ...</li>
+      </ul>
+      <br>
+      <div style="text-align:center; color:white;">
+        <a href="index.html" style="outline:none;"><span class="knopflink">Message</span></a>
+        <a href="weather.html" style="outline:none;"><span class="knopflink">Wetter</span></a>
+        <a href="spotify.html" style="outline:none;"><span class="knopflink">Spotify</span></a>
+      </div>
+      <div>
+        <div class="promenu small">Nur mit Login:</div>
+        <div class="promenu small"><a class="prolink" href="admin.html">Admin</a></div>
+        <div class="promenu small"><a class="prolink" href="config.html">Config</a></div>
+        <div class="promenu small"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

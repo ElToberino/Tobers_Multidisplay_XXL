@@ -1,0 +1,4 @@
+&domains=spiegel.de
+&domains=diepresse.com
+&domains=tirol.orf.at
+&domains=tagesschau.de

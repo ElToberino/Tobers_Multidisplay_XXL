@@ -1,0 +1,16 @@
+0
+1
+4
+pool.ntp.org
+0
+Multidisplay XXL
+2
+20
+0
+0
+multi
+display
+60
+30
+60
+1

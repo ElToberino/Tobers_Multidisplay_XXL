@@ -1,0 +1,350 @@
+<!-- 
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Cache-control" content="no-cache">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<title>Deine Nachricht auf dem Display</title>
+	<STYLE>
+		.eingabe2 {
+			border: 0.1em solid #af601a;
+			border-radius: 0.4em;
+			border-style: solid;
+			width: 62%;
+			padding-top: 0.2em;
+			padding-bottom: 0.2em;
+			font-size: 90%;
+			background-color: #f6b54d;
+			margin-top: 0.4em;
+			margin-bottom: 0.4em;
+			color: #af601a;
+		}
+
+		.deiner {
+			padding-left: 1em;
+			padding-top: 0.2em;
+			padding-bottom: 0.2em;
+			font-size: 100%;
+			font-weight: bold;
+			margin-top: 0.4em;
+			margin-bottom: 0.4em;
+			color: #af601a;
+		}
+
+		.clearX {
+			position: absolute;
+			right: 3%;
+			font-size: 80%;
+			padding: 0em 0.3em;
+			background: none;
+			border: none;
+			cursor: pointer;
+			color: red;
+			font-weight: bold;
+		}
+
+		@media (hover: hover) {
+			.clearX:hover {
+				background: none !important;
+				background-color: transparent !important;
+				color: darkred !important;
+			}
+		}
+
+		.clearX:active {
+			color: darkred;
+		}
+	</STYLE>
+	<SCRIPT>
+		var enabled = 1;
+
+		window.addEventListener('load', () => {
+			once(0);
+			autoGrowInputFields();
+		})
+
+		function once(reload) {
+			setTimeout(function () {						// for setTimeout see: https://www.a-coding-project.de/ratgeber/javascript/delay 
+				fetch('/showSimple')
+					.then(response => {
+						return response.json()
+					})
+					.then(data => {
+
+						enabled = data.No2;
+
+						var msgSaver = data.No1;
+
+						var titel = "Deine Nachricht auf dem Display - " + data.Name;
+						document.title = titel;
+						document.getElementById("device").innerHTML = data.Name;
+
+						if (enabled == 0) {
+							// Hide Name label, field, and clear button
+							document.getElementById("nameLabel").style.display = "none";
+							document.getElementById("nameFieldWrap").style.display = "none";
+							document.getElementById("nameBr").style.display = "none";
+
+							// Hide Submit button and warning box
+							document.getElementById("submitBtn").style.display = "none";
+							document.getElementById("showbox").style.display = "none";
+
+							// Hide X button for message field
+							document.getElementById("einsClear").style.display = "none";
+
+							// Style the message field
+							document.getElementById("eins").value = "Own Message ist deaktiviert.";
+							document.getElementById("eins").disabled = true;
+							document.getElementById("eins").style.color = "#af601a";
+							document.getElementById("eins").style.backgroundColor = "#f6b54d";
+							document.getElementById("eins").style.textAlign = "center";
+							document.getElementById("eins").style.borderColor = "#af601a";
+							document.getElementById("eins").style.marginTop = "3em";
+						}
+						else {
+							var urheber;
+							if (data.No3 == "") urheber = data.No1;
+							else urheber = "Nachricht von " + data.No3 + ": " + data.No1;
+							document.getElementById("ownmessage").innerHTML = urheber;
+							document.getElementById("eins").value = msgSaver;
+							document.getElementById("drei").value = data.No3;
+							document.getElementById("drei").select();
+
+							if (reload == 1) {
+								document.getElementById("warning").innerHTML = "<br><b>wird beim nächsten Durchlauf angezeigt</b><br>";
+								document.getElementById("showbox").className = "greensign";
+								document.getElementById("eins").select();
+							}
+						}
+						console.log(data)
+					})
+					.catch(err => {
+						document.getElementById("warning").innerHTML = "Daten konnten nicht geladen werden!";
+						document.getElementById("showbox").className = "redsign";
+					})
+			}, 250);
+		}
+
+		function SendeFunction() {
+			document.getElementById("formu").submit();
+			once(1);
+		}
+
+
+		function trick() {
+			if (enabled == 1) {
+				var versuch = document.getElementById("eins").value;
+				var versuchName = document.getElementById("drei").value;
+				var toberREGEX = /[\}\{\\\"]/;                                  // siehe Simulator auf https://www.regextester.com/97777
+				var toberREGEXname = /[\}\{\\\"\:]/;                            // Name field: also no colons
+				var result = toberREGEX.test(versuch);
+				var resultname = toberREGEXname.test(versuchName);
+				if (result == true && resultname == false) {
+					document.getElementById("ownmessage").innerHTML = "";
+					document.getElementById("warning").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \" <br>";
+					document.getElementById("showbox").className = "redsign";
+				}
+				else if (resultname == true && result == false) {
+					document.getElementById("ownmessage").innerHTML = "";
+					document.getElementById("warning").innerHTML = "Falsche Zeichen! Nicht erlaubt sind im Namensfeld: } : {  \\  \" <br>";
+					document.getElementById("showbox").className = "redsign";
+				}
+				else if (resultname == true && result == true) {
+					document.getElementById("ownmessage").innerHTML = "";
+					document.getElementById("warning").innerHTML = "Falsche Zeichen! Nicht erlaubt sind: }  {  \\  \ und im Namensfeld kein Doppelpunkt <br>";
+					document.getElementById("showbox").className = "redsign";
+				}
+				else {
+					SendeFunction();
+				}
+			}
+		}
+
+
+
+
+
+
+
+		document.addEventListener('keydown', function (e) {   	// function is called on key press
+			if (e.key === 'Enter') {
+				//e.preventDefault();                           // moved (verhindert Zeilenumbruch in Textarea)
+				trick();
+			}
+		});
+
+		function autoGrowInputFields() {
+			setTimeout(() => {
+				const ids = ['eins'];
+				ids.forEach(id => {
+					const input = document.getElementById(id);
+					if (input && input.tagName.toLowerCase() === 'input') {
+						const ta = document.createElement('textarea');
+						ta.id = input.id;
+						ta.name = input.name;
+						ta.className = input.className;
+						ta.maxLength = input.maxLength;
+						if (input.size) ta.cols = input.size;
+						ta.rows = 1;
+
+						// Caluclate exact original styles of Input
+						const comp = window.getComputedStyle(input);
+
+						let clientH = parseFloat(comp.height) || 0;
+						let boxSizing = comp.boxSizing;
+						let borderTop = parseFloat(comp.borderTopWidth) || 0;
+						let borderBottom = parseFloat(comp.borderBottomWidth) || 0;
+						let padTopOrig = parseFloat(comp.paddingTop) || 0;
+						let padBotOrig = parseFloat(comp.paddingBottom) || 0;
+
+						let totalInnerH = 0;
+						if (boxSizing === 'border-box') {
+							totalInnerH = clientH - borderTop - borderBottom;
+						} else {
+							totalInnerH = clientH + padTopOrig + padBotOrig;
+						}
+
+						if (totalInnerH <= 0) {
+							totalInnerH = parseFloat(comp.fontSize) * 1.6;
+						}
+
+						let lh = parseFloat(comp.lineHeight);
+						if (isNaN(lh)) {
+							lh = parseFloat(comp.fontSize) * 1.2;
+						}
+
+						const pad = Math.max(0, (totalInnerH - lh) / 2);
+						const origHeight = (totalInnerH + borderTop + borderBottom) + 'px';
+
+						ta.style.resize = 'none';
+						ta.style.overflow = 'hidden';
+						ta.style.fontFamily = comp.fontFamily;
+						ta.style.fontSize = comp.fontSize;
+						ta.style.boxSizing = 'border-box';
+
+						ta.style.lineHeight = lh + 'px';
+						ta.style.paddingTop = pad + 'px';
+						ta.style.paddingBottom = pad + 'px';
+						ta.style.paddingLeft = comp.paddingLeft;
+						ta.style.paddingRight = comp.paddingRight;
+
+						ta.style.verticalAlign = comp.verticalAlign;
+						ta.style.whiteSpace = 'break-spaces';
+
+						ta.style.minHeight = origHeight;
+						ta.style.height = origHeight;
+
+						ta.style.width = comp.width;
+
+						if (input.style.width) {
+							ta.style.width = input.style.width;
+						}
+						if (input.style.maxWidth) {
+							ta.style.maxWidth = input.style.maxWidth;
+						}
+
+						const adjustHeight = () => {
+							ta.style.height = origHeight;
+							const sHeight = ta.scrollHeight;
+							if (sHeight > totalInnerH) {
+								ta.style.height = (sHeight + borderTop + borderBottom) + 'px';
+							}
+						};
+
+						ta.addEventListener('input', adjustHeight);
+						input.parentNode.replaceChild(ta, input);
+
+						ta.addEventListener('keydown', function (e) {
+							if (e.key === 'Enter') e.preventDefault();
+						});
+
+
+						const desc = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+						Object.defineProperty(ta, 'value', {
+							get: function () { return desc.get.call(this); },
+							set: function (val) {
+								desc.set.call(this, val);
+								setTimeout(adjustHeight, 10);
+							}
+						});
+
+						ta.value = input.value;
+					}
+				});
+			}, 300);
+		}
+
+		function clearChar(feld) {
+			let inp = document.getElementById(feld);
+			inp.value = "";
+		}
+
+	</SCRIPT>
+</head>
+
+<body>
+
+	<div>
+
+		<div class="aussen">
+			<h1 id="device">
+				<nobr>&nbsp;</nobr>
+			</h1>
+
+			<h2>Schicke Deine Nachricht auf's Display</h2><br>
+			<p>
+			<div style="width:20em;">
+				<FORM id="formu" METHOD="POST" action="/postFormSimple" target="hiddenFrame">
+					<div id="nameLabel" style="float:left;" class="deiner"> Dein Name:</div>
+					<div id="nameFieldWrap" style="position: relative; display: inline-block; width: 62%;">
+						<input id="drei" class="eingabe2" type="text" name="myName" pattern="[^\{\}:\x22\\]+"
+							maxlength="29" value=""
+							style="width: 100%; padding-right:1em; padding-left:0.5em; box-sizing: border-box;">
+						<input type="button" class="knopf clearX" style="font-size:70%; padding-right:0em;"
+							onclick="clearChar('drei')" value="X">
+					</div><br id="nameBr">
+					<!-- The container serves as an anchor for the absolute positioning of the X -->
+					<div style="position: relative; display: block; width: 100%;">
+						<!-- Input field keeps its exact shape; padding-right keeps text from running under the X -->
+						<input id="eins" class="eingabe"
+							style="max-width:100%; padding-right:1em; padding-left:0.5em; box-sizing: border-box;"
+							type="text" name="myText" pattern="[^\{\}\x22\\]+" maxlength="490" value="">
+
+						<!-- The X is absolutely positioned on the far right inside the input field -->
+						<input id="einsClear" type="button" class="knopf clearX" onclick="clearChar('eins')" value="X">
+					</div>
+
+					<div id="showbox" class="invisible"><span id="ownmessage"></span><span id="warning"></span></div>
+					<input id="submitBtn" type="button" class="knopf" onclick="trick()" value="Abschicken"><br>
+				</form>
+			</div>
+			<br>
+			<br>
+			<br>
+			<div style="text-align:center; color:white;">
+				<a href="news.html" style="outline:none;"><span class="knopflink">News</span></a>
+				<a href="weather.html" style="outline:none;"><span class="knopflink">Wetter</span></a>
+				<a href="spotify.html" style="outline:none;"><span class="knopflink">Spotify</span></a>
+			</div>
+
+
+			<div>
+				<div class="promenu small">Nur mit Login:</div>
+				<div class="promenu small"><a class="prolink" href="admin.html">Admin</a></div>
+				<div class="promenu small"><a class="prolink" href="config.html">Config</a></div>
+				<div class="promenu small"><a class="prolink" href="spiffs.html">Spiffs</a></div>
+			</div>
+
+		</div>
+	</div>
+	<iframe name="hiddenFrame" width="0" height="0" border="0" style="display: none;"></iframe>
+</body>
+
+</html>

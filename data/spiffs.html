@@ -1,0 +1,315 @@
+<!--  
+Tobers Multidisplay XXL by ElToberino (c) 2020 - present
+for further information see: https://github.com/ElToberino/Tobers_Multidisplay_XXL
+
+SPIFFS functions and html taken and adapted from https://fipsok.de/ (Jens Fleischer)
+-->
+
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Spiffsverwaltung</title>
+    <style>
+        .spiffs-cb {
+            width: 1em;
+            height: 1em;
+            margin: 0 0.4em 0 0;
+            vertical-align: middle;
+            cursor: pointer;
+            flex-shrink: 0;
+            /* prevent checkbox from shrinking in flex */
+        }
+
+        /* Initially hidden to keep alignment */
+        .upload-status {
+            margin-top: 0.4em;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: none;
+        }
+
+        /* Sort controls matching the Orange/White theme */
+        .sort-controls {
+            margin-bottom: 0.4em;
+            font-size: 0.8em;
+            text-align: right;
+            padding-right: 1em;
+            color: #af601a;
+            font-weight: bold;
+        }
+
+        .sort-btn {
+            cursor: pointer;
+            text-decoration: none;
+            color: #af601a;
+            /* Inactive = Orange */
+            background: none;
+            border: none;
+            padding: 0 0.3em;
+            font-family: inherit;
+            font-size: 1em;
+            margin-left: 0.3em;
+            font-weight: bold;
+        }
+
+        .sort-btn:hover {
+            color: white;
+        }
+
+        .sort-btn.active {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .configknopf {
+            padding: 0.4em 0.6em 0.4em 0.6em;
+        }
+    </style>
+    <SCRIPT>
+
+        var free = 0;
+        var currentFiles = [];     // Store fetched files here
+        var currentSpace = {};     // Store space info here
+        var sortMode = 'name';     // 'name' or 'type'
+
+        function list() {
+            loadName();
+            let myList = document.querySelector('main');
+            myList.innerHTML = '<div class="proform">Loading...</div>';
+            fetch('json').then(function (response) {
+                return response.json();
+            }).then(function (json) {
+                // Last element is the space info object
+                currentSpace = json[json.length - 1];
+                currentFiles = json.slice(0, json.length - 1);
+                renderList();
+            });
+        }
+
+        function renderList() {
+            let myList = document.querySelector('main');
+            myList.innerHTML = '';
+
+            // Sorting logic
+            currentFiles.sort(function (a, b) {
+                if (sortMode === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else {
+                    // Sort by extension (type)
+                    var extA = a.name.split('.').pop().toLowerCase();
+                    var extB = b.name.split('.').pop().toLowerCase();
+                    if (extA < extB) return -1;
+                    if (extA > extB) return 1;
+                    return a.name.localeCompare(b.name); // fallback to name
+                }
+            });
+
+            // 1. Sort Controls (Top)
+            var sortHtml = '<div class="sort-controls">Sortieren nach: ' +
+                '<button class="sort-btn ' + (sortMode === 'name' ? 'active' : '') + '" onclick="setSort(\'name\')">Name</button>' +
+                '<button class="sort-btn ' + (sortMode === 'type' ? 'active' : '') + '" onclick="setSort(\'type\')">Typ</button>' +
+                '</div>';
+            myList.insertAdjacentHTML('beforeend', sortHtml);
+
+            // 2. File List
+            for (var i = 0; i < currentFiles.length; i++) {
+                var isProtected = (currentFiles[i].name == 'spiffs.html' || currentFiles[i].name == 'spiffs.html.gz');
+                var cb = isProtected ? '<span style="display:inline-block; width:1em; margin-right:0.4em;"></span>' : '<input type="checkbox" class="spiffs-cb file-cb" value="' + currentFiles[i].name + '">';
+                var dir = '<div class="spiffs"><div class="spiffsfile">' + cb +
+                    '<span>' + currentFiles[i].name + '</span></div><div class="spiffsaction"><small> ' + currentFiles[i].size + '</small>' +
+                    '<a class="spiffslink" href ="' + currentFiles[i].name + '?r=' + Date.now() + '" download="' + currentFiles[i].name + '"> Download </a>';
+                if (!isProtected) {
+                    dir += 'or <a class="spiffslink" href ="' + currentFiles[i].name + '?delete=/' + currentFiles[i].name + '" onclick="return confirmDel()">Delete </a>';
+                }
+                dir += '</div></div>';
+                myList.insertAdjacentHTML('beforeend', dir);
+            }
+
+            // 3. Bulk Actions (Bottom)
+            myList.insertAdjacentHTML('beforeend',
+                '<div class="spiffs" style="padding-top:0.6em;margin-top:0.2em;">' +
+                '<label style="cursor:pointer; font-weight:bold;"><input type="checkbox" class="spiffs-cb" id="selAll" onchange="toggleAll(this)"> Select all</label>' +
+                ' <button class="configknopf" style="margin: 0.4em 0em 0.5em 1em; width:auto;" onclick="deleteSelected()">Delete selected</button>' +
+                ' <button class="configknopf" style="margin: 0.4em 0em 0.5em 2em; width:auto;" onclick="formatSpiffs()">Format SPIFFS</button></div>');
+
+            // 4. Space Usage (Bottom)
+            myList.insertAdjacentHTML('beforeend', '<div class="proform">SPIFFS belegt ' + currentSpace.usedBytes + ' von ' + currentSpace.totalBytes + '</div>');
+            free = currentSpace.freeBytes;
+        }
+
+        function setSort(mode) {
+            sortMode = mode;
+            renderList();
+        }
+
+        function fileSize() {
+            var inp = document.querySelector('input[type="file"]');
+            if (!inp.files || inp.files.length === 0) return;
+            var totalBytes = 0;
+            for (var k = 0; k < inp.files.length; k++) {
+                totalBytes += inp.files[k].size;
+            }
+            var sOutput = totalBytes + ' Byte';
+            var a = document.querySelector('#sizeInfo'), b = document.querySelector('[value="Upload"]');
+            for (var aMultiples = [
+                ' KB',
+                ' MB'
+            ], nMultiple = 0, nApprox = totalBytes / 1024; nApprox > 1; nApprox /= 1024, nMultiple++) {
+                sOutput = nApprox.toFixed(2) + aMultiples[nMultiple];
+            }
+            if (totalBytes > free) {
+                a.innerHTML = '<div class="proform"><small> ' + inp.files.length + ' file(s), ' + sOutput + '</small><strong style="color: red;"> Nicht genug Speicher frei </strong></div>';
+                b.setAttribute('disabled', 'disabled');
+            }
+            else {
+                a.innerHTML = '<div class="proform">' + inp.files.length + ' file(s), ' + sOutput + ' </div>';
+                b.removeAttribute('disabled');
+            }
+        }
+
+        function uploadFiles(event) {
+            event.preventDefault();
+            var inp = document.querySelector('input[type="file"]');
+            if (!inp.files || inp.files.length === 0) return;
+            var files = Array.from(inp.files);
+            var total = files.length;
+            var done = 0;
+            var statusEl = document.getElementById('uploadStatus');
+            var btn = document.querySelector('[value="Upload"]');
+
+            // Show upload status
+            statusEl.style.display = 'block';
+            btn.setAttribute('disabled', 'disabled');
+
+            function uploadNext() {
+                if (done >= total) {
+                    statusEl.textContent = 'Fertig - ' + total + ' Datei(en) hochgeladen.';
+                    btn.removeAttribute('disabled');
+                    inp.value = '';
+                    document.querySelector('#sizeInfo').innerHTML = '';
+                    list();
+
+                    // Hide status after 5 seconds
+                    setTimeout(function () {
+                        statusEl.style.display = 'none';
+                        statusEl.innerHTML = '';
+                    }, 5000);
+
+                    return;
+                }
+                var file = files[done];
+                statusEl.textContent = 'Uploading ' + (done + 1) + ' / ' + total + ': ' + file.name + ' ...';
+                var fd = new FormData();
+                fd.append('upload', file);
+                fetch('/upload', { method: 'POST', body: fd }).then(function () {
+                    done++;
+                    uploadNext();
+                }).catch(function (err) {
+                    statusEl.textContent = 'Fehler bei ' + file.name + ': ' + err;
+                });
+            }
+            uploadNext();
+        }
+
+        function jn() {
+            return confirm('Wirklich formatieren? Alle Daten gehen verloren.\nDu musst anschliessend spiffs.html wieder laden.');
+        }
+
+        function formatSpiffs() {
+            if (jn()) {
+                // Create a temporary form to POST to /format
+                var form = document.createElement("form");
+                form.method = "POST";
+                form.action = "/format";
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function confirmDel() {
+            return confirm('Soll diese Datei wirklich unwiderruflich geloescht werden?');
+        }
+
+        function toggleAll(master) {
+            var cbs = document.querySelectorAll('.file-cb');
+            for (var i = 0; i < cbs.length; i++) cbs[i].checked = master.checked;
+        }
+
+        function deleteSelected() {
+            var cbs = document.querySelectorAll('.file-cb:checked');
+            if (cbs.length === 0) { alert('Keine Dateien ausgewaehlt.'); return; }
+            var names = [];
+            for (var i = 0; i < cbs.length; i++) names.push(cbs[i].value);
+            if (!confirm(names.length + ' Datei(en) loeschen?\n\n' + names.join('\n'))) return;
+            fetch('/deleteMulti', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'files=' + encodeURIComponent(names.join(','))
+            }).then(function () {
+                list();
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', list);
+
+        function loadName() {
+            fetch('/showname')
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    var titel = "Spiffsverwaltung - " + data.Name;
+                    document.title = titel;
+                    document.getElementById("device").innerHTML = data.Name;
+                    console.log(data)
+                })
+        }
+
+    </SCRIPT>
+</head>
+
+<body>
+
+    <div>
+
+        <div class="aussen">
+            <h1 id="device">
+                <nobr>&nbsp;</nobr>
+            </h1>
+
+            <h2>Spiffsverwaltung</h2><br>
+            <p>
+            <div class="spiffsinput">
+                <form onsubmit="uploadFiles(event)">
+                    <input type="file" name="upload" multiple onchange="fileSize()">
+                    <input type="submit" value="Upload" disabled>
+                </form>
+                <div id="uploadStatus" class="upload-status"></div>
+            </div>
+
+            <div>
+                <span id="sizeInfo"></span>
+                <main></main>
+            </div>
+
+            <div>
+                <div class="promenu"><a class="prolink" href="admin.html">Admin</a></div>
+                <div class="promenu"><a class="prolink" href="config.html">Config</a></div>
+                <div class="promenu"><a class="prolink" href="index.html">OwnMsg</a></div>
+                <div class="promenu"><a class="prolink" href="news.html">News</a></div>
+                <div class="promenu"><a class="prolink" href="weather.html">Wetter</a></div>
+                <div class="promenu"><a class="prolink" href="spotify.html">Spotify</a></div>
+                <div class="promenu">Spiffs</div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

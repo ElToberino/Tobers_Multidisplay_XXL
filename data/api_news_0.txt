@@ -1,0 +1,4 @@
+everything?domains=tagesschau.de
+everything?domains=diepresse.com
+everything?domains=tirol.orf.at
+everything?domains=faz.net
