@@ -114,7 +114,7 @@ Note: On this site changes are only saved persistently to file by clicking "Save
 <br>
 <br>
 **Spotify**<br>
-Please note that Spotify has recently limited the lifetime of the refreshtoken; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refreshtoken in the Music Api Log on api.html.<br>
+Please note that Spotify has recently limited the lifetime of the refresh token; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refresh token in the Music Api Log on api.html.<br>
 <br>
 If you get problems connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
 <br><br><br>
@@ -126,7 +126,7 @@ I want to use a small display with few modules. Will it work?<br>
 *Sure. This XXL version has some functions designed for larger displays, but you can easily deactivate them if they don't fit on your display (service messages, combined time/date).*<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
-***1**. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme. (For further information, check the 'additional files' directory in this repo.) <br>
+***1**. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme. (For further information, check the "additional_files" directory in this repo.) <br>
 **2.** With core 3 I faced some issues with http client occurring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
 Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
