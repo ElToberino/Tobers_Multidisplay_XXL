@@ -127,7 +127,7 @@ I want to use a small display with few modules. Will it work?<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
 ***1**. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme. (For further information, check the "additional_files" directory in this repo.) <br>
-**2.** With core 3 I faced some issues with http client occurring after about 20 hours of uptime. I did a lot of investigation and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
+**2.** With core 3 I faced some issues with http client occurring after about 20 hours of uptime. I did a lot of investigations and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
 Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
 *No. This is not a fork but a completely new version of the program with different files. Erase chip completely and do a clean, fresh install.*<br>
