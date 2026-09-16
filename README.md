@@ -138,7 +138,7 @@ As an expert you can easily adapt the html files; but this is only a cosmetic is
 Of course the English language version for the messages on display is still implemented.*<br>
 <br>
 Why can I choose on slot "Musikinfo" between Spotify, Castweb and Info extern?<br>
-*The support of Castweb is experimental and not recommended. It is based on on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
+*The support of Castweb is experimental and not recommended. It is based on the [cast-web-api by vervallsweg](https://github.com/vervallsweg/cast-web-api) which is no longer maintained and very difficult to set up. It's better to just ignore this function.<br>
 Info extern is a simple API of my program: You can send form data containing "Artist - Song" to "DEVICE_IP/musicInfo" and the display will show this as music information. Take a look at function parseMusicInfo() for further information.*<br>
 <br>
 Which API do you prefer?<br>
