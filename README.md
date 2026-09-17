@@ -41,6 +41,7 @@ Max7219 8x8 LED matrix modules (Meanwhile I use displays with up to 20 modules)<
 [MD_MAX72xx Library by majicDesigns](https://github.com/MajicDesigns/MD_MAX72XX)<br>
 [Parola Library by majicDesigns](https://github.com/MajicDesigns/MD_Parola)<br>
 [Arduino Json library by Benoit Blanchon](https://github.com/bblanchon/ArduinoJson)<br>
+[ArduinoStreamUtils library by Benoit Blanchon](https://github.com/bblanchon/ArduinoStreamUtils)<br>
 [My fork of WifiManager library (development branch) by tzapu/tablatronix](https://github.com/ElToberino/WiFiManager_for_Multidisplay)<br>
 
 * *Installed boards:*<br>
