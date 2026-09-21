@@ -3,7 +3,7 @@ Tobers Multidisplay XXL for ESP32 and MAX7219 8x8 LED matrix modules is the expe
 In addition to the well-known features of *Tobers Multidisplay* it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
 **Note:** You should be familiar with *Tobers Multidisplay* and only try out this new version if you know how the program works and how to set up everything. As this software is "experts only" there is no support.<br>
 If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
-If you want more and you don't mind about things getting more complicated you can go on.<br>
+If you want more and you don't mind things getting more complicated you can go on.<br>
 **Please read the following information carefully before starting your project.** <br><br>
 <p align="center">
   <img src="showcase/Multidisplay_XXL.jpeg" width="500">
@@ -58,7 +58,7 @@ SPOTIFY: premium account AND [developer registration of your device](https://dev
 <br><br>
 
 **Setup**<br>
-All settings required have to be done on top of the code in the /// USER SETTINGS /// section. All other configuration is done during runtime via config.html.<br>
+All settings required have to be done at the top of the source code in the /// USER SETTINGS /// section. All other configuration is done during runtime via config.html.<br>
 <br>
 
 **Messages (admin.html)**<br>
@@ -98,7 +98,7 @@ The first message and the first graphic slot are stand alone slots if all other 
 Enable or Disable and Configure HTML Authentication for private sites<br>
 <br>
 Note: All settings made via config.html are automatically saved to file.<br>
-Clicking "Display" on top of the site reveals detailed information of the device.<br>
+Clicking "Display" on top of the site reveals detailed information about the device.<br>
 <br>
 <br>
 
@@ -107,7 +107,7 @@ Clicking "Display" on top of the site reveals detailed information of the device
 On api.html you can change news sources and weather coordinates.<br>
 Active API(s) as configured on config.html are the green ones. Inactive APIs (red) can also be configured.<br>
 <img src="showcase/api_weath.jpg" width="500"><br>
-Location for weather data is determined by longitude und latitude. As this is very precise (depending on API and its used forecast model) the name of the location must be set manually.<br>
+Location for weather data is determined by longitude und latitude. As this is very precise (depending on API and its used forecast model) the location name must be set manually.<br>
 Good sites for getting coordinates are - for example - [www.laengengrad-breitengrad.de](https://www.laengengrad-breitengrad.de/) or [gpskoordinaten.de/](https://www.gpskoordinaten.de) <br>
 <br>
 There are also logs available for all API calls including time server call.<br>
@@ -117,7 +117,7 @@ Note: On this site changes are only saved persistently to file by clicking "Save
 **Spotify**<br>
 Please note that Spotify has recently limited the lifetime of the refresh token; it expires after 180 days. That means you have to do the authentication process again after this time. You can see the remaining lifetime of the refresh token in the Music Api Log on api.html.<br>
 <br>
-If you get problems connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
+f you have trouble connecting to Spotify, please check if the TLS certificates (saved in *cert_spot.txt* and *cert_spot_api.txt*) have changed. You can find this out with your browser: Go to *accounts.spotify.com* and *api.spotify.com*, click the key symbol in the address bar and compare the certificates. If they are different, change the files and upload them (a restart is required after that).
 <br><br><br>
 **FAQ**<br>
 Why don't you provide a tutorial for setting up the display?<br>
@@ -127,7 +127,7 @@ I want to use a small display with few modules. Will it work?<br>
 *Sure. This XXL version has some functions designed for larger displays, but you can easily deactivate them if they don't fit on your display (service messages, combined time/date).*<br>
 <br>
 Why do you recommend V 2.0.17 of ESP32 core for Arduino?<br>
-***1**. The compiled binary file has become very large with core 3 and does no longer fit into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme. (For further information, check the "additional_files" directory in this repo.) <br>
+***1**. The compiled binary file has become very large with core 3 and and no longer fits into the standard sketch/ota partition scheme. If you want to compile with core 3 you have to use a custom partition scheme. (For further information, check the "additional_files" directory in this repo.) <br>
 **2.** With core 3 I faced some issues with http client occurring after about 20 hours of uptime. I did a lot of investigations and I'm sure that this is a specific core 3 problem that can not be handled with code adjustments. With core 2 everything runs fine for days.*<br>
 <br>
 Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
@@ -135,7 +135,7 @@ Can I just update via OTA from my existing *Tobers Multidisplay"?<br>
 <br>
 Where are the English html files?<br>
 *To keep it simple I do not provide two versions of the html files (as you know it from the former version).<br> 
-As an expert you can easily adapt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
+As an expert, you can easily adapt the html files; but this is only a cosmetic issue and not necessary as the sites are self-explaining.<br>
 Of course the English language version for the messages on display is still implemented.*<br>
 <br>
 Why can I choose on slot "Musikinfo" between Spotify, Castweb and Info extern?<br>
