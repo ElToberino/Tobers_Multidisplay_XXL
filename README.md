@@ -3,7 +3,7 @@ Tobers Multidisplay XXL for ESP32 and MAX7219 8x8 LED matrix modules is the expe
 In addition to the well-known features of *Tobers Multidisplay* it can also show graphic animations. Besides that there are lots of optimizations and nearly everything is configurable during runtime; you can even use different news and weather APIs.<br><br>
 **Note:** You should be familiar with *Tobers Multidisplay* and only try out this new version if you know how the program works and how to set up everything. As this software is "experts only" there is no support.<br>
 If you are happy with *Tobers Multidisplay* and it meets your needs, it's better to stay with the old version. It is still maintained and supported.<br>
-If you want more and you don't mind things getting more complicated you can go on.<br>
+If you want more and you don't mind things getting more complicated you can proceed.<br>
 **Please read the following information carefully before starting your project.** <br><br>
 <p align="center">
   <img src="showcase/Multidisplay_XXL.jpeg" width="500">
