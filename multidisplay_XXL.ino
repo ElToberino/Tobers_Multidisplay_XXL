@@ -1,10 +1,9 @@
-
 //    *********************************************
 //
 //    TOBERS MULTIDISPLAY XXL
 //    FOR ESP32
 //
-//    V 0.8.6 - 16.09.2026
+//    V 0.8.7 - 17.11.2026
 //
 //    *********************************************
 //
@@ -164,8 +163,6 @@ const char* timezone =  "CET-1CEST,M3.5.0/02,M10.5.0/03";       // = CET/CEST  -
 
 
 
-
-
 /// DEFINITIONS ///
 
 ///// PAROLA DISPLAY ////
@@ -320,7 +317,7 @@ const uint8_t tablesize = numberofcities*2;
 uint8_t enableSpotify = 1;                                            // internal variable set via webinterface, enables calling Spotify for information about currently playing song (only ifdef Spotify)
 
 #ifdef SPOTIFY
-const char* redirectUri = "http://127.0.0.1:80/callback";             // redirect uri
+const char* redirectUri = "https://eltoberino.github.io/auth_flow/index.html"; // redirect uri
 char cert_spotify_account[1800];                                      // certificate necessary for https connection, loaded from file "certificate.txt" -> if certificate is expired update "certificate.txt" and upload it to SPIFFS
                                                                                                 //  --> used certificate for accounts.spotify.com : " Starfield Root Certificate Authority - G2"
 char cert_spotify_api[1800];                                          // certificate necessary for https connection, loaded from file "certificate.txt" -> if certificate is expired update "certificate.txt" and upload it to SPIFFS
@@ -989,7 +986,7 @@ void wificonnect() {
    #endif
     P.print("no Wifi --> AP");
     WiFiManager wifiManager;
- 
+
    #ifndef SPOTIFY                                                         // this doesn't work with SPOTIFY defined on ESP32 !
     wifiManager.setAPStaticIPConfig(AP_IP, AP_IP, AP_Netmask);             // if #define SPOTIFY default ESP IP 192.168.4.1 is set
    #endif
@@ -1235,7 +1232,7 @@ void getTimeFromServer(){
   time_retry++;
   }
 
-  if (time_retry >= 20){                                               // max waiting time 20 x 500ms = 10s
+  if (initial.tm_year == 70){                                               // max waiting time 20 x 500ms = 10s
    #ifdef DEBUG
     Serial.println("Connection to time server failed");
    #endif
@@ -1360,29 +1357,36 @@ void displayTime() {                                                            
 }
 
 
-void displayOnlyTime(bool preventRefresh = false) {                                 // special case: if only time message is activated -> hh:mm:ss
+void displayOnlyTime(bool preventRefresh = false) {          						// special case: if only time message is activated -> hh:mm:ss
   P.setTextAlignment(PA_CENTER);
   static time_t lastsecond = 0;
   time_t now = time(NULL);
   localtime_r(&now, &tm);
+  
   if (tm.tm_sec != lastsecond) {
     lastsecond = tm.tm_sec;
     if (enableTime==1){
-      strftime (timeshow, sizeof(timeshow), "%H:%M:%S", &tm);
-      P.displayClear();              // neu 0.8
+      strftime (timeshow, sizeof(timeshow), "%H:%M:%S", &tm);     
       P.setFont(numeric7Seg);
-      P.print(timeshow);
+      P.setTextEffect(PA_PRINT, PA_NO_EFFECT);
+      P.setPause(0);
+      P.setTextBuffer(timeshow);
       P.displayReset();
     } else {
-      P.displayClear();                                                             
+      P.displayClear();
       P.displayReset();
     }
   }  
+
+  if (enableTime==1) {
+    P.displayAnimate();
+  }
+ 
   if (millis() - previoustimecall > (timeRefreshInterval* 60000) && WiFi.status() == WL_CONNECTED && !preventRefresh){
     getTimeFromServer();                                         
     previoustimecall=millis();
   }
-  if (tm.tm_mday != lastDayRun) {                                                     // run makeDate() when day has changed
+  if (tm.tm_mday != lastDayRun) {                                                     
     makeDate();
   }
 }
@@ -2490,12 +2494,14 @@ void spotiauth() {
   #endif 
   
   String firstContact;
-  firstContact.reserve(300);  // Pre-allocate
+  firstContact.reserve(300);
   firstContact = "https://accounts.spotify.com/de/authorize/?client_id=";
   firstContact += clientID;
   firstContact += "&response_type=code&redirect_uri=";
   firstContact += redirectUri;
   firstContact += "&scope=user-read-currently-playing";
+  firstContact += "&state=";
+  firstContact += WiFi.localIP().toString();
   
   server.sendHeader("Location", firstContact);
   server.send(302, "text/plain", "ok");    
@@ -3521,19 +3527,13 @@ void handleList() {                                                             
   while (file) {
     if (temp.length() > 1) temp += ",";
     
-    #ifdef ESP_ARDUINO_VERSION                                         // for ESP32 core Version >=2.0.0
-      temp += R"({"name":")";                                         
-      temp += file.name();                                             
-      temp += R"(","size":")";                                         
-      temp += formatBytes(file.size());                               
-      temp += R"("})";                                                
-    #else
-      temp += R"({"name":")";                                         
-      temp += String(file.name()).substring(1);                        // (needs String for substring)
-      temp += R"(","size":")";                                         
-      temp += formatBytes(file.size());                                
-      temp += R"("})";                                                
-    #endif
+    temp += R"({"name":")";       
+    String fName = file.name();
+    if(fName.startsWith("/")) fName = fName.substring(1);
+    temp += fName;
+    temp += R"(","size":")";                                         
+    temp += formatBytes(file.size());                               
+    temp += R"("})";
     
     file = root.openNextFile();
   }
@@ -4606,7 +4606,14 @@ void refreshNews(){               // refreshes news data
   P.displayClear(); 
   P.setFont(tobFont);
   P.setTextAlignment(PA_CENTER);
-  P.print("getting news");
+  P.setTextEffect(PA_PRINT, PA_NO_EFFECT);
+  P.setPause(0);
+  P.setTextBuffer("getting news");
+  P.displayReset();
+  
+  while (!P.displayAnimate()) {
+  }
+
   delay(500);
   getNewsData();
   P.displayClear();               // clears the display — turns off all LEDs (all pixels go dark).
@@ -4619,7 +4626,14 @@ void refreshWeather(){            // refreshes weather data
   P.displayClear(); 
   P.setFont(tobFont);
   P.setTextAlignment(PA_CENTER);
-  P.print("getting weath");
+  P.setTextEffect(PA_PRINT, PA_NO_EFFECT);
+  P.setPause(0);
+  P.setTextBuffer("getting weath");
+  P.displayReset();
+  
+  while (!P.displayAnimate()) {
+  }
+ 
   delay(500);
   getWeatherData();
   P.displayClear(); 
@@ -5803,7 +5817,6 @@ void setup(void){
  
   P.setTextAlignment(PA_CENTER);
   P.print("starting up...");
-  //P.displayReset();                        // neu 0.8
   
   wificonnect();                             // connects to WiFi or establishes access point
   //WiFi.setSleep(false);                    // Test
@@ -5849,7 +5862,6 @@ void setup(void){
   server.begin();                              // starts webserver
   delay(100);
   
-  //P.displayReset();                         // neu 0.8
   P.setSpriteData(pacman1, W_PMAN1, F_PMAN1, pacman2, W_PMAN2, F_PMAN2);        
 
   P.addChar(degreeC_ascii, degreeC);                 // adds characters for celsius and fahrenheit
@@ -5919,6 +5931,10 @@ if (timeOnly) {                       // if all messages except time are deactiv
   if (millis() - timeshowmillis > (catalog[locationTime].delay * delayTime)) displayOnlyTime(true);
   if (millis() - timeshowmillis > ((catalog[locationTime].delay * delayTime) + (catalog[locationTime].pause * pauseTime))){ 
     timeWithSecs = false;
+    P.setTextBuffer(timeshow);
+    P.setTextEffect(PA_PRINT, PA_NO_EFFECT);
+    P.setPause(0);
+    P.displayReset();
   }
 
 } else if (singleMsgOnly) {            // leaves main routine for constantly showing a single message
